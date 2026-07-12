@@ -302,7 +302,7 @@ export default function ToolsPage() {
                       [<span className="text-[#00FF41] opacity-0 group-hover:opacity-100 transition-none">&gt;</span> {tool.name}]
                     </span>
                     <span className="hidden md:inline text-[11px] text-[#555555] truncate">
-                      // {tool.shortDescription}
+                      {"// "}{tool.shortDescription}
                     </span>
                   </div>
 

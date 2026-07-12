@@ -526,30 +526,30 @@ puts config.get('database.host', 'localhost')`,
 # System health check script
 
 RED='\\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m'
+GREEN='\\033[0;32m'
+NC='\\033[0m'
 
 check_service() {
     local name=$1
     if systemctl is-active --quiet "$name" 2>/dev/null; then
-        echo -e "[${GREEN}OK${NC}] $name is running"
+        echo -e "[\${GREEN}OK\${NC}] $name is running"
     else
-        echo -e "[${RED}FAIL${NC}] $name is not running"
+        echo -e "[\${RED}FAIL\${NC}] $name is not running"
     fi
 }
 
 check_disk() {
-    local threshold=${1:-80}
+    local threshold=\${1:-80}
     df -h / | awk 'NR==2 {print $5}' | sed 's/%//' | read usage
     if [ "$usage" -gt "$threshold" ]; then
-        echo -e "[${RED}WARN${NC}] Disk usage at ${usage}% (threshold: ${threshold}%)"
+        echo -e "[\${RED}WARN\${NC}] Disk usage at \${usage}% (threshold: \${threshold}%)"
     else
-        echo -e "[${GREEN}OK${NC}] Disk usage at ${usage}%"
+        echo -e "[\${GREEN}OK\${NC}] Disk usage at \${usage}%"
     fi
 }
 
 services=("nginx" "postgresql" "redis")
-for svc in "${services[@]}"; do
+for svc in "\${services[@]}"; do
     check_service "$svc"
 done
 check_disk 85
@@ -1449,16 +1449,6 @@ export default function CodeFormatterClient() {
     }, 500)
   }, [language])
 
-  // Auto-format on paste after language is detected and state settles
-  useEffect(() => {
-    if (justPasted && inputCode.trim()) {
-      const timer = setTimeout(() => {
-        handleFormatInternal()
-      }, 50)
-      return () => clearTimeout(timer)
-    }
-  }, [justPasted, inputCode])
-
   const handleFormatInternal = useCallback(() => {
     setError(null)
     if (!inputCode.trim()) {
@@ -1478,7 +1468,7 @@ export default function CodeFormatterClient() {
           result = inputCode.split('\n').map(l => l.trim()).filter(Boolean).join('\n')
         }
       } else {
-        result = formatter(inputCode)
+        result = formatter(inputCode, indentSize)
       }
 
       setOutputCode(result)
@@ -1507,6 +1497,16 @@ export default function CodeFormatterClient() {
       setError(err.message || 'Formatting failed. Please check your syntax.')
     }
   }, [inputCode, language, indentSize, minify])
+
+  // Auto-format on paste after language is detected and state settles
+  useEffect(() => {
+    if (justPasted && inputCode.trim()) {
+      const timer = setTimeout(() => {
+        handleFormatInternal()
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [justPasted, inputCode, handleFormatInternal])
 
   const handleFormat = () => {
     handleFormatInternal()

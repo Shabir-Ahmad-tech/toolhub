@@ -715,7 +715,7 @@ export default function HexToRgbPage() {
                   )}
                 </div>
               </>
-            )}
+            ) : null}
       </div>
     </ToolLayout>
   )

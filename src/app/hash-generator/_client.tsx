@@ -441,12 +441,12 @@ function hmacBytes(algo: HashAlgo, keyStr: string, msgBytes: Uint8Array): string
 
   const blockSize = algo === 'sha512' ? 128 : 64;
   if (key.length > blockSize) {
-    key = hashBytes(algo, key);
+    key = hashBytes(algo, key) as any;
   }
   if (key.length < blockSize) {
     const paddedKey = new Uint8Array(blockSize);
     paddedKey.set(key);
-    key = paddedKey;
+    key = paddedKey as any;
   }
 
   const ipad = new Uint8Array(blockSize);

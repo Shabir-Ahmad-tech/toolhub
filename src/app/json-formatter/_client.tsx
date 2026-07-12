@@ -412,7 +412,7 @@ function JsonTreeNode({ name, value, path, depth }: {
       </div>
       {expanded && !isEmpty && (
         <div>
-          {entries.map(([key, val]) => {
+          {entries.map(([key, val]: [string, any]) => {
             const childName = isArray ? `[${key}]` : key
             const childPath = isArray ? `${path}[${key}]` : `${path}.${key}`
             return (
@@ -833,7 +833,7 @@ export default function JsonFormatterClient() {
     }
 
     // Normalise to sorted-key output so whitespace differences are ignored
-    const normalize = (val: any) => {
+    const normalize = (val: any): any => {
       if (val === null || typeof val !== 'object') return val
       if (Array.isArray(val)) return val.map(normalize)
       return Object.keys(val).sort().reduce((acc: any, k) => {
