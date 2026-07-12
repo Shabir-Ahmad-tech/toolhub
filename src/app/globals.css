@@ -1,0 +1,626 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono-tools);
+  --font-heading: var(--font-heading);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  /* Force 0px border-radius project-wide — Kinetic Terminal rule */
+  --radius: 0rem;
+  --radius-sm: 0rem;
+  --radius-md: 0rem;
+  --radius-lg: 0rem;
+  --radius-xl: 0rem;
+  --radius-2xl: 0rem;
+  --radius-3xl: 0rem;
+  --radius-4xl: 0rem;
+}
+
+:root {
+  /* Light mode: high-contrast minimal */
+  --card: #F9F9F9;
+  --card-foreground: #000000;
+  --popover: #F9F9F9;
+  --popover-foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #F9F9F9;
+  --secondary: #e5e5e5;
+  --secondary-foreground: #000000;
+  --muted: #e5e5e5;
+  --muted-foreground: #666666;
+  --accent: #e5e5e5;
+  --accent-foreground: #000000;
+  --destructive: #cc0000;
+  --border: #000000;
+  --input: #000000;
+  --ring: #00FF41;
+  --chart-1: #000000;
+  --chart-2: #333333;
+  --chart-3: #666666;
+  --chart-4: #999999;
+  --chart-5: #cccccc;
+  --radius: 0rem;
+  --sidebar: #F9F9F9;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #000000;
+  --sidebar-primary-foreground: #F9F9F9;
+  --sidebar-accent: #e5e5e5;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #000000;
+  --sidebar-ring: #00FF41;
+  --background: #F9F9F9;
+  --foreground: #000000;
+}
+
+.dark {
+  /* Kinetic Terminal: pure black, bone white, CRT green */
+  --background: #000000;
+  --foreground: #F9F9F9;
+  --card: #000000;
+  --card-foreground: #F9F9F9;
+  --popover: #000000;
+  --popover-foreground: #F9F9F9;
+  --primary: #00FF41;
+  --primary-foreground: #000000;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #F9F9F9;
+  --muted: #1a1a1a;
+  --muted-foreground: #888888;
+  --accent: #1a1a1a;
+  --accent-foreground: #F9F9F9;
+  --destructive: #ff4444;
+  --border: #F9F9F9;
+  --input: #F9F9F9;
+  --ring: #00FF41;
+  --chart-1: #F9F9F9;
+  --chart-2: #cccccc;
+  --chart-3: #999999;
+  --chart-4: #666666;
+  --chart-5: #333333;
+  --radius: 0rem;
+  --sidebar: #000000;
+  --sidebar-foreground: #F9F9F9;
+  --sidebar-primary: #00FF41;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #F9F9F9;
+  --sidebar-border: #F9F9F9;
+  --sidebar-ring: #00FF41;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+
+  /* Keyboard navigation: bright green focus-visible ring for accessibility */
+  *:focus-visible {
+    outline: 2px solid #00FF41 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Custom block cursor for text inputs — thick blinking white block */
+  input[type="text"],
+  input[type="search"],
+  input[type="url"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    caret-color: #F9F9F9;
+  }
+
+  /* Assets-style terminal input — green block cursor on focus */
+  .terminal-input {
+    caret-color: #F9F9F9;
+  }
+  .terminal-input:focus {
+    caret-color: #00FF41;
+  }
+
+  /* Raw blocky scrollbars — no rounded edges */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #F9F9F9;
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00FF41;
+  }
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #F9F9F9 #000000;
+  }
+}
+
+/* ——— Existing animations ——— */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* ——— Kinetic Terminal animations ——— */
+
+/* Glitch double-flash for alerts/errors */
+@keyframes glitch-flash {
+  0%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.animate-glitch-flash {
+  animation: glitch-flash 0.3s ease-in-out;
+}
+
+/* Hard offset break — feels like a physical lever being pulled */
+@keyframes hard-offset {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(4px, 4px); }
+  100% { transform: translate(0, 0); }
+}
+
+.animate-hard-offset {
+  animation: hard-offset 0.3s ease-out;
+}
+
+/* Text scrambling (used by useTextScramble hook, CSS fallback) */
+@keyframes text-scramble {
+  0% { content: "$"; }
+  20% { content: "#"; }
+  40% { content: "@"; }
+  60% { content: "%"; }
+  80% { content: "&"; }
+  100% { content: ""; }
+}
+
+/* CRT scanline subtle flicker — applied to body via .crt-flicker */
+@keyframes crt-flicker {
+  0% { opacity: 0.97; }
+  50% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+.animate-crt-flicker {
+  animation: crt-flicker 0.1s infinite;
+}
+
+/* CRT Scanline overlay — repeating horizontal lines */
+@keyframes crt-scanlines {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 4px; }
+}
+
+.crt-scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+}
+
+/* Subtle CRT grid texture overlay — both horizontal and vertical lines */
+.crt-grid {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.015) 2px,
+      rgba(255, 255, 255, 0.015) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.015) 2px,
+      rgba(255, 255, 255, 0.015) 4px
+    );
+}
+
+/* Text scramble utility — inline character cycling for fallback */
+@keyframes scramble-char {
+  0% { opacity: 0; transform: scaleX(0); }
+  50% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 1; transform: scaleX(1); }
+}
+
+.scramble-char {
+  display: inline-block;
+  animation: scramble-char 0.05s ease-in-out;
+}
+
+/* Glitch text — horizontal displacement jitter on hover/focus */
+@keyframes glitch-text {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, -2px); }
+  80% { transform: translate(1px, 2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-text {
+  animation: glitch-text 0.2s infinite;
+}
+
+/* Glitch skew effect */
+@keyframes glitch-skew {
+  0% { transform: skew(0deg, 0deg); }
+  10% { transform: skew(0.5deg, 0deg); }
+  20% { transform: skew(-0.5deg, 0deg); }
+  30% { transform: skew(0deg, 0.5deg); }
+  40% { transform: skew(0deg, -0.5deg); }
+  50% { transform: skew(0.3deg, 0.3deg); }
+  60% { transform: skew(-0.3deg, -0.3deg); }
+  70% { transform: skew(0deg, 0deg); }
+  100% { transform: skew(0deg, 0deg); }
+}
+
+.animate-glitch-skew {
+  animation: glitch-skew 2s infinite;
+}
+
+/* Power-on flicker — simulates an old CRT monitor turning on */
+@keyframes power-on {
+  0% { opacity: 0; filter: brightness(3); }
+  10% { opacity: 0.5; filter: brightness(5); }
+  20% { opacity: 0.8; filter: brightness(2); }
+  30% { opacity: 0.3; filter: brightness(4); }
+  50% { opacity: 0.9; filter: brightness(1.5); }
+  70% { opacity: 0.5; filter: brightness(3); }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+.animate-power-on {
+  animation: power-on 0.6s ease-out;
+}
+
+/* ====== Terminal Redesign Animations ====== */
+
+/* Terminal block cursor blink */
+@keyframes terminal-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-terminal-blink {
+  animation: terminal-blink 1s step-end infinite;
+}
+
+/* Typewriter reveal — clips text from left */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.typewriter-text {
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  animation: typewriter 1.5s steps(40, end);
+}
+
+/* Fade-in-slide-up for terminal elements */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up-delay-1 {
+  animation: fade-in-up 0.5s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-up-delay-2 {
+  animation: fade-in-up 0.5s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-up-delay-3 {
+  animation: fade-in-up 0.5s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+/* Terminal boot flash */
+@keyframes terminal-boot-flash {
+  0% { opacity: 0; }
+  20% { opacity: 0.8; }
+  40% { opacity: 0.2; }
+  60% { opacity: 0.9; }
+  80% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.animate-terminal-boot {
+  animation: terminal-boot-flash 0.4s ease-out;
+}
+
+/* KRUMB heading glitch effect */
+@keyframes heading-glitch {
+  0% { transform: translate(0); filter: none; }
+  10% { transform: translate(-3px, 1px); filter: hue-rotate(90deg); }
+  20% { transform: translate(3px, -1px); filter: hue-rotate(180deg); }
+  30% { transform: translate(-2px, 2px); filter: hue-rotate(270deg); }
+  40% { transform: translate(2px, -2px); filter: none; }
+  50% { transform: translate(-1px, 1px); filter: hue-rotate(90deg); }
+  60% { transform: translate(1px, -1px); filter: none; }
+  100% { transform: translate(0); filter: none; }
+}
+
+.glitch-heading:hover {
+  animation: heading-glitch 0.4s ease-in-out;
+}
+
+/* Terminal line blink (boot sequence cursor) */
+@keyframes terminal-line-blink {
+  0%, 100% { border-color: #00FF41; }
+  50% { border-color: transparent; }
+}
+
+.terminal-line-blink {
+  border-right: 2px solid #00FF41;
+  animation: terminal-line-blink 0.8s step-end infinite;
+}
+
+/* Scanline animation (pure CSS, no canvas) */
+@keyframes scanline-move {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.terminal-scanline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: rgba(0, 255, 65, 0.03);
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanline-move 8s linear infinite;
+}
+
+/* Terminal boot text line */
+@keyframes boot-line {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 20px; }
+}
+
+.boot-line-enter {
+  animation: boot-line 0.3s ease-out forwards;
+}
+
+/* Pulse for terminal status dots */
+.terminal-dot {
+  animation: terminal-blink 2s step-end infinite;
+}
+
+/* ====== Terminal Button System ====== */
+/* Every button: [> text] — no rectangle, just brackets with green glow on hover */
+
+.terminal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-mono-tools), monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888888;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: none;
+  text-decoration: none;
+}
+.terminal-btn:hover,
+.terminal-btn:focus-visible {
+  color: #00FF41;
+  text-shadow: 0 0 8px #00FF41, 0 0 2px #00FF41;
+}
+.terminal-btn .green-chevron {
+  color: #00FF41;
+}
+.terminal-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.terminal-btn:focus-visible {
+  outline: 2px solid #00FF41;
+  outline-offset: 2px;
+}
+
+/* Larger variant for hero/primary buttons */
+.terminal-btn-lg {
+  font-size: 0.875rem;
+}
+
+/* Nav link style (for header nav) */
+.terminal-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-mono-tools), monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888888;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: none;
+  text-decoration: none;
+  padding: 0.25rem 0;
+}
+.terminal-nav-link:hover,
+.terminal-nav-link:focus-visible {
+  color: #00FF41;
+  text-shadow: 0 0 8px #00FF41, 0 0 2px #00FF41;
+}
+.terminal-nav-link .green-chevron {
+  color: #00FF41;
+}
+.terminal-nav-link:focus-visible {
+  outline: 2px solid #00FF41;
+  outline-offset: 2px;
+}
+
+/* Active (current page) nav link */
+.terminal-nav-link-active {
+  color: #555555;
+  pointer-events: none;
+}
+
+/* ============================
+   CRT CINEMATIC OVERLAYS
+   Professional scanline, grid,
+   and noise effects. Applied
+   via fixed divs in RootLayout.
+   ============================ */
+
+/* Scanlines — subtle horizontal CRT lines */
+.crt-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+}
+
+/* Noise / grain overlay */
+.crt-noise {
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  opacity: 0.015;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Subtle grid pattern — behind content */
+.crt-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image:
+    linear-gradient(rgba(0, 255, 65, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.12) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Slight CRT screen curvature (very subtle) */
+.crt-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+
+/* Boot line reveal — CSS-driven, GPU accelerated */
+@keyframes boot-line-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.boot-line-enter {
+  animation: boot-line-reveal 0.35s ease-out forwards;
+}

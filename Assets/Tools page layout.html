@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRUMB.DEV - Tools Directory</title>
+    
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Import Tailwind CSS for rapid styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#000000',
+                        bone: '#F9F9F9',
+                        crt: '#00FF41',
+                        darkgray: '#333333',
+                        lightgray: '#888888',
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        heading: ['"Space Grotesk"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Force strict styling rules */
+        * {
+            border-radius: 0 !important;
+        }
+        body {
+            background-color: #000000;
+            color: #F9F9F9;
+        }
+        /* Highlight selection color */
+        ::selection {
+            background-color: #00FF41;
+            color: #000000;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-mono">
+
+    <!-- 1. HEADER -->
+    <header class="flex justify-between items-center p-6 border-b border-darkgray">
+        <div class="flex items-center gap-4">
+            <!-- Fractured Logo Box -->
+            <div class="w-10 h-10 border border-bone flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <polygon points="12,2 22,20 2,20" />
+                </svg>
+            </div>
+            <span class="font-heading text-xl font-bold tracking-widest uppercase">KRUMB.DEV</span>
+        </div>
+        <button class="border border-bone px-4 py-2 uppercase text-sm hover:bg-bone hover:text-black focus:outline-none focus:ring-2 focus:ring-crt transition-none">
+            [ LIGHT ]
+        </button>
+    </header>
+
+    <!-- 2. SEARCH BANNER -->
+    <section class="border-b border-bone p-6">
+        <div class="text-lightgray mb-2 uppercase text-sm">SYS_DIR: /tools/*</div>
+        <div class="flex items-center">
+            <span class="text-crt mr-4 text-2xl">&gt;</span>
+            <input
+                type="text"
+                placeholder="SEARCH_QUERY: [ type tool name or keyword... ]"
+                class="w-full bg-black text-2xl text-white placeholder-lightgray focus:outline-none focus:border-none transition-none"
+                style="caret-color: #F9F9F9;"
+            />
+        </div>
+    </section>
+
+    <!-- 3. MAIN SPLIT LAYOUT -->
+    <main class="flex-grow flex flex-col md:flex-row">
+        
+        <!-- SIDEBAR -->
+        <aside class="w-full md:w-64 border-r border-darkgray p-6 flex flex-col gap-4">
+            <div class="text-lightgray mb-4 uppercase text-sm border-b border-darkgray pb-2">[ FILTERS ]</div>
+            
+            <button class="text-left px-4 py-2 bg-bone text-black border border-bone uppercase font-bold transition-none">
+                &gt; [ ALL_TOOLS ]
+            </button>
+            <button class="text-left px-4 py-2 hover:bg-bone hover:text-black border border-transparent hover:border-bone uppercase transition-none">
+                [ FORMATTERS ]
+            </button>
+            <button class="text-left px-4 py-2 hover:bg-bone hover:text-black border border-transparent hover:border-bone uppercase transition-none">
+                [ GENERATORS ]
+            </button>
+            <button class="text-left px-4 py-2 hover:bg-bone hover:text-black border border-transparent hover:border-bone uppercase transition-none">
+                [ SECURITY ]
+            </button>
+            <button class="text-left px-4 py-2 hover:bg-bone hover:text-black border border-transparent hover:border-bone uppercase transition-none">
+                [ TEXT_UTILS ]
+            </button>
+        </aside>
+
+        <!-- RESULTS GRID -->
+        <section class="flex-grow p-6">
+            <div class="text-lightgray mb-6 uppercase text-sm border-b border-darkgray pb-2">[ ACTIVE_TOOLS: 21 ]</div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- TOOL CARD 1 -->
+                <a href="#" class="group block border border-darkgray hover:border-bone bg-black p-6 transition-none relative cursor-pointer">
+                    <div class="absolute top-4 right-4 text-crt opacity-0 group-hover:opacity-100 transition-none font-bold">
+                        [ RUN ]
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-2">JSON Formatter</h3>
+                    <div class="flex gap-2 mt-4">
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[data]</span>
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[format]</span>
+                    </div>
+                </a>
+                
+                <!-- TOOL CARD 2 -->
+                <a href="#" class="group block border border-darkgray hover:border-bone bg-black p-6 transition-none relative cursor-pointer">
+                    <div class="absolute top-4 right-4 text-crt opacity-0 group-hover:opacity-100 transition-none font-bold">
+                        [ RUN ]
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-2">JWT Decoder</h3>
+                    <div class="flex gap-2 mt-4">
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[security]</span>
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[crypto]</span>
+                    </div>
+                </a>
+
+                <!-- TOOL CARD 3 -->
+                <a href="#" class="group block border border-darkgray hover:border-bone bg-black p-6 transition-none relative cursor-pointer">
+                    <div class="absolute top-4 right-4 text-crt opacity-0 group-hover:opacity-100 transition-none font-bold">
+                        [ RUN ]
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-2">Base64 Encoder</h3>
+                    <div class="flex gap-2 mt-4">
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[data]</span>
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[encode]</span>
+                    </div>
+                </a>
+
+                <!-- TOOL CARD 4 -->
+                <a href="#" class="group block border border-darkgray hover:border-bone bg-black p-6 transition-none relative cursor-pointer">
+                    <div class="absolute top-4 right-4 text-crt opacity-0 group-hover:opacity-100 transition-none font-bold">
+                        [ RUN ]
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-2">Regex Tester</h3>
+                    <div class="flex gap-2 mt-4">
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[text]</span>
+                        <span class="text-lightgray border border-darkgray px-2 py-1 text-xs">[logic]</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 4. FOOTER -->
+    <footer class="border-t border-darkgray p-6 flex flex-col md:flex-row justify-between items-center text-sm text-lightgray mt-auto">
+        <div class="uppercase tracking-widest">© 2026 KRUMB.DEV [ SYSTEM OFFLINE ]</div>
+        <div class="flex gap-6 uppercase mt-4 md:mt-0">
+            <a href="#" class="hover:text-white hover:underline decoration-crt underline-offset-4">TOOLS</a>
+            <a href="#" class="hover:text-white hover:underline decoration-crt underline-offset-4">ABOUT</a>
+            <a href="#" class="hover:text-white hover:underline decoration-crt underline-offset-4">PRIVACY</a>
+        </div>
+    </footer>
+
+</body>
+</html>

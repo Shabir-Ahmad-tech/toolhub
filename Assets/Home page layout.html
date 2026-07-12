@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRUMB.DEV - Kinetic Terminal</title>
+    
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Import Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#000000',
+                        bone: '#F9F9F9',
+                        crt: '#00FF41',
+                        darkgray: '#333333',
+                        lightgray: '#888888',
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        heading: ['"Space Grotesk"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Force strict 0px border-radius project-wide */
+        * {
+            border-radius: 0 !important;
+        }
+        body {
+            background-color: #000000;
+            color: #F9F9F9;
+        }
+        /* Phosphor green selection color */
+        ::selection {
+            background-color: #00FF41;
+            color: #000000;
+        }
+        /* Custom block cursor for the main search input */
+        .terminal-input {
+            caret-color: #F9F9F9;
+        }
+        .terminal-input:focus {
+            caret-color: #00FF41;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-mono">
+
+    <!-- 1. HEADER -->
+    <header class="flex justify-between items-center p-6 border-b border-darkgray">
+        <div class="flex items-center gap-4">
+            <!-- Fractured Logo Box -->
+            <div class="w-10 h-10 border border-bone flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <polygon points="12,2 22,20 2,20" />
+                </svg>
+            </div>
+            <span class="font-heading text-xl font-bold tracking-widest uppercase">KRUMB.DEV</span>
+        </div>
+        <button class="border border-bone px-4 py-2 uppercase text-sm hover:bg-bone hover:text-black focus:outline-none focus:ring-2 focus:ring-crt transition-none">
+            [ LIGHT ]
+        </button>
+    </header>
+
+    <main class="flex-grow">
+        <!-- 2. THE COMMAND PROMPT HERO -->
+        <section class="pt-24 pb-24 px-6 max-w-5xl mx-auto flex flex-col items-start">
+            <h1 class="font-heading text-7xl md:text-[10vw] leading-none font-bold tracking-tighter mb-6 text-bone">
+                KRUMB
+            </h1>
+            <p class="text-xl md:text-2xl text-lightgray mb-12">
+                &gt; 21 tools. Zero server calls. Paste your payload below.
+            </p>
+            
+            <div class="w-full relative flex">
+                <div class="w-4 bg-crt flex-shrink-0"></div>
+                <input 
+                    type="text" 
+                    placeholder="Search tools... (e.g., 'jwt', 'json', 'base64')" 
+                    class="terminal-input w-full bg-black border border-bone border-l-0 pl-6 pr-6 py-6 md:py-8 text-xl md:text-2xl text-white placeholder-darkgray focus:outline-none focus:border-crt focus:border-2 focus:border-l-0 transition-none"
+                />
+            </div>
+        </section>
+
+        <!-- 3. THE DIRECTORY GRID -->
+        <section class="px-6 pb-24 max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end border-b border-bone pb-6 mb-12">
+                <div>
+                    <h2 class="font-heading text-4xl font-bold uppercase">Developer Tools</h2>
+                    <p class="text-lightgray mt-2">SYS_DIR: /tools/all</p>
+                </div>
+                <a href="krumb-tools.html" class="mt-6 md:mt-0 border border-bone px-6 py-3 uppercase hover:bg-bone hover:text-black transition-none focus:outline-none focus:ring-2 focus:ring-crt cursor-pointer inline-block">
+                    [ Browse All Tools ]
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tool Card 1 -->
+                <a href="#" class="group block border border-darkgray hover:border-bone bg-black p-6 transition-none relative cursor-pointer">
+                    <div class="absolute top-4 right-4 text-crt opacity-0 group-hover:opacity-100 transition-none font-bold">
+                        [ RUN ]
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-2">JWT Decoder</h3>
+                    <p class="text-lightgray text-sm mb-6 h-12">Decode, verify, and inspect JSON Web Tokens locally.</p>
+                    <div class="flex gap-2">
+                        <span class="border border-darkgray text-xs px-2 py-1 text-lightgray">[security]</span>
+                        <span class="border border-darkgray text-xs px-2 py-1 text-lightgray">[crypto]</span>
+                    </div>
+                </a>
+
+                <!-- Tool Card 2 -->
+                <a href="#" class="group block border border-darkgray hover:border-bone bg-black p-6 transition-none relative cursor-pointer">
+                    <div class="absolute top-4 right-4 text-crt opacity-0 group-hover:opacity-100 transition-none font-bold">
+                        [ RUN ]
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-2">JSON Formatter</h3>
+                    <p class="text-lightgray text-sm mb-6 h-12">Format, validate, and repair broken JSON payloads.</p>
+                    <div class="flex gap-2">
+                        <span class="border border-darkgray text-xs px-2 py-1 text-lightgray">[data]</span>
+                        <span class="border border-darkgray text-xs px-2 py-1 text-lightgray">[format]</span>
+                    </div>
+                </a>
+
+                <!-- Tool Card 3 -->
+                <a href="#" class="group block border border-darkgray hover:border-bone bg-black p-6 transition-none relative cursor-pointer">
+                    <div class="absolute top-4 right-4 text-crt opacity-0 group-hover:opacity-100 transition-none font-bold">
+                        [ RUN ]
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-2">Regex Tester</h3>
+                    <p class="text-lightgray text-sm mb-6 h-12">Test regular expressions against live text streams.</p>
+                    <div class="flex gap-2">
+                        <span class="border border-darkgray text-xs px-2 py-1 text-lightgray">[text]</span>
+                        <span class="border border-darkgray text-xs px-2 py-1 text-lightgray">[logic]</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 4. EXECUTION POLICY (TRUST SECTION) -->
+        <section class="px-6 pb-32 max-w-4xl mx-auto">
+            <div class="border-l-4 border-crt pl-8 py-2">
+                <h2 class="font-heading text-3xl font-bold uppercase mb-6 text-bone">Execution Policy</h2>
+                <p class="text-lightgray leading-relaxed mb-6">
+                    KRUMB.DEV operates on a strict zero-server-call architecture. Every conversion, hash generation, and formatting task executes entirely within your browser's JavaScript engine.
+                </p>
+                <p class="text-lightgray leading-relaxed">
+                    We maintain no database storage, record no server logs, and do not track your payload data. Your code remains yours.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- 5. RAW FOOTER -->
+    <footer class="border-t border-darkgray p-6 flex flex-col md:flex-row justify-between items-center text-sm text-lightgray mt-auto">
+        <div class="mb-4 md:mb-0 uppercase tracking-widest">
+            © 2026 KRUMB.DEV [ SYSTEM OFFLINE ]
+        </div>
+        <div class="flex gap-6 uppercase">
+            <a href="#" class="hover:text-white hover:underline decoration-crt underline-offset-4">Tools</a>
+            <a href="#" class="hover:text-white hover:underline decoration-crt underline-offset-4">Architecture</a>
+            <a href="#" class="hover:text-white hover:underline decoration-crt underline-offset-4">Privacy</a>
+        </div>
+    </footer>
+
+</body>
+</html>
