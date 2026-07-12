@@ -318,10 +318,11 @@ export default function DnsSslCheckerPage() {
   const [dnsResults, setDnsResults] = useState<DnsSection[]>(getSimulatedDns('krumb.dev'))
   const [sslResult, setSslResult] = useState<SslInfo>(getSimulatedSsl('krumb.dev'))
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [dnsCopied, setDnsCopied] = useState<Record<string, boolean>>({})
   const [sslCopied, setSslCopied] = useState<Record<string, boolean>>({})
 
-  const handleLookup = () => {
+  const handleLookup = async () => {
     const d = inputValue.trim().toLowerCase()
     if (!d) {
       setError('Enter a domain name')
@@ -333,8 +334,23 @@ export default function DnsSslCheckerPage() {
     }
     setError('')
     setDomain(d)
-    setDnsResults(getSimulatedDns(d))
-    setSslResult(getSimulatedSsl(d))
+    setIsLoading(true)
+
+    try {
+      const res = await fetch(`/api/dns-ssl-lookup?domain=${encodeURIComponent(d)}`)
+      if (!res.ok) {
+        throw new Error('Failed to perform live lookup')
+      }
+      const data = await res.json()
+      if (data.dns) setDnsResults(data.dns)
+      if (data.ssl) setSslResult(data.ssl)
+    } catch (err: any) {
+      console.warn('Falling back to simulated data due to lookup error:', err)
+      setDnsResults(getSimulatedDns(d))
+      setSslResult(getSimulatedSsl(d))
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -429,8 +445,8 @@ export default function DnsSslCheckerPage() {
               autoComplete="off"
               spellCheck={false}
             />
-            <button onClick={handleLookup} className="terminal-btn py-3 text-sm">
-              [<span className="green-chevron">&gt;</span> Lookup]
+            <button onClick={handleLookup} disabled={isLoading} className="terminal-btn py-3 text-sm">
+              [<span className="green-chevron">&gt;</span> {isLoading ? 'Looking up...' : 'Lookup'}]
             </button>
           </div>
           {error && (
@@ -441,9 +457,9 @@ export default function DnsSslCheckerPage() {
         {/* ===== Disclaimer ===== */}
         <div className="border border-[#333333] p-3">
           <p className="text-[10px] font-mono text-[#888888] leading-relaxed">
-            <span className="text-[#00FF41]">*</span> Note: Real DNS/SSL checks require
-            a server-side resolver. Results below are simulated for educational
-            purposes. For production diagnostics, use <span className="text-[#F9F9F9]">dig</span>,{' '}
+            <span className="text-[#00FF41]">*</span> Note: Real DNS/SSL checks are performed
+            live via our server-side resolver, with simulated fallback if resolution fails.
+            For production diagnostics, use <span className="text-[#F9F9F9]">dig</span>,{' '}
             <span className="text-[#F9F9F9]">nslookup</span>, or{' '}
             <span className="text-[#F9F9F9]">openssl s_client</span> from your terminal.
           </p>

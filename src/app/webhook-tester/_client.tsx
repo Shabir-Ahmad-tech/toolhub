@@ -622,45 +622,61 @@ export default function WebhookTesterClient() {
     const requestHeaders = getCombinedHeaders()
     
     try {
-      const response = await fetch(url, {
-        method: method,
-        headers: requestHeaders,
-        body: ['GET', 'HEAD'].includes(method) ? undefined : payload,
-        mode: 'cors'
+      const response = await fetch('/api/webhook-proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url,
+          method,
+          headers: requestHeaders,
+          body: ['GET', 'HEAD'].includes(method) ? undefined : payload
+        })
       })
 
+      const data = await response.json()
       const endTime = performance.now()
       const duration = Math.round(endTime - startTime)
-      const text = await response.text()
 
-      const responseHeadersObj: Record<string, string> = {}
-      response.headers.forEach((value, key) => {
-        responseHeadersObj[key] = value
-      })
+      if (response.status === 502) {
+        const errorResult: ResponseResult = {
+          status: null,
+          statusText: data.statusText || 'Proxy Request Failed',
+          headers: {},
+          body: '',
+          timeMs: duration,
+          errorType: 'cors_or_network',
+          errorDetails: data.errorDetails || 'Error occurred while forwarding the webhook request'
+        }
+        setCurrentResponse(errorResult)
+        saveToHistory(url, method, duration, 'Failed', errorResult, requestHeaders)
+        return
+      }
 
       const result: ResponseResult = {
-        status: response.status,
-        statusText: response.statusText,
-        headers: responseHeadersObj,
-        body: text,
-        timeMs: duration,
+        status: data.status,
+        statusText: data.statusText,
+        headers: data.headers || {},
+        body: data.body || '',
+        timeMs: data.timeMs || duration,
         errorType: null
       }
 
       setCurrentResponse(result)
-      saveToHistory(url, method, duration, response.status, result, requestHeaders)
+      saveToHistory(url, method, duration, data.status, result, requestHeaders)
     } catch (err: any) {
       const endTime = performance.now()
       const duration = Math.round(endTime - startTime)
 
       const errorResult: ResponseResult = {
         status: null,
-        statusText: 'CORS or Network Failure',
+        statusText: 'Proxy connection failure',
         headers: {},
         body: '',
         timeMs: duration,
         errorType: 'cors_or_network',
-        errorDetails: err.message || 'CORS restriction or local server offline.'
+        errorDetails: err.message || 'Could not connect to webhook proxy server.'
       }
 
       setCurrentResponse(errorResult)

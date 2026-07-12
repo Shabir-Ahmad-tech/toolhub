@@ -858,6 +858,16 @@ export default function CodePlaygroundClient() {
     if (pyodideReadyRef.current || pyodideLoadingRef.current) return
     pyodideLoadingRef.current = true
     try {
+      if (!(window as any).loadPyodide) {
+        await new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js'
+          script.async = true
+          script.onload = () => resolve()
+          script.onerror = (e) => reject(e)
+          document.head.appendChild(script)
+        })
+      }
       const pyodide = await (window as any).loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/' })
       ;(window as any).pyodide = pyodide
       pyodideReadyRef.current = true
