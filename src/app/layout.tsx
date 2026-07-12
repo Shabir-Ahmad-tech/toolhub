@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s — KRUMB.DEV",
   },
   description:
-    "Free online developer tools. No signup required. Instant results. 21 tools for developers including formatters, validators, encoders, and generators.",
+    "Free online developer tools. No signup required. Instant results. A comprehensive suite of tools for developers including formatters, validators, encoders, and generators.",
   keywords: [
     "developer tools", "online formatter", "JSON formatter", "JWT decoder",
     "regex tester", "code formatter", "base64 encoder", "URL encoder",

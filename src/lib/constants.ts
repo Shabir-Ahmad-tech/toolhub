@@ -14,7 +14,7 @@ export interface Tool {
 }
 
 export const TOOLS: Tool[] = [
-  // === DEVELOPER TOOLS (21 tools) ===
+  // === DEVELOPER TOOLS ===
   {
     slug: 'password-generator',
     name: 'Password Generator',

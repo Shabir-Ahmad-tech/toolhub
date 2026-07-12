@@ -54,7 +54,7 @@ export function HeroSection() {
     setSelectedIndex(-1)
   }, [query])
 
-  // Featured tools (only these, not all 21)
+  // Featured tools (only these, not all of them)
   const featuredTools = useMemo(() =>
     TOOLS.filter(t => FEATURED_TOOLS.includes(t.slug)),
     []
