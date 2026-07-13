@@ -27,20 +27,25 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://krumb.dev"),
   title: {
-    default: "KRUMB.DEV — Free Online Developer Tools",
-    template: "%s — KRUMB.DEV",
+    default:
+      "ToolHub — 21 Free Developer Tools: JSON Formatter, Regex Tester, Code Beautifier & More",
+    template: "%s — ToolHub | KRUMB.DEV",
   },
   description:
-    "Free online developer tools. No signup required. Instant results. A comprehensive suite of tools for developers including formatters, validators, encoders, and generators.",
+    "21 free online developer tools — JSON formatter, JWT decoder, regex tester, code beautifier, password generator, base64 encoder, and more. No signup, no upload, instant results.",
   keywords: [
-    "developer tools", "online formatter", "JSON formatter", "JWT decoder",
-    "regex tester", "code formatter", "base64 encoder", "URL encoder",
-    "password generator", "UUID generator", "hash generator",
+    "free developer tools", "online developer tools", "dev tools online",
+    "JSON formatter", "JWT decoder", "regex tester", "code formatter",
+    "base64 encoder", "URL encoder", "password generator",
+    "UUID generator", "hash generator", "diff checker",
+    "Unix timestamp converter", "YAML to JSON", "HTML playground",
+    "free online tools for developers", "dev utilities",
   ],
   openGraph: {
-    title: "KRUMB.DEV — Free Online Developer Tools",
+    title:
+      "ToolHub — 21 Free Developer Tools: JSON Formatter, Regex Tester, Code Beautifier & More",
     description:
-      "Free online developer tools. No signup required. Instant results.",
+      "21 free online developer tools. JSON formatter, JWT decoder, regex tester, code beautifier, generators, converters & more. No signup, no upload.",
     type: "website",
     siteName: "KRUMB.DEV",
   },

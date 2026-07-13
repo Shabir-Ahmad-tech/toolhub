@@ -150,6 +150,18 @@ export default function VariantPage({
           ))}
         </div>
 
+        {/* ── Collection note ─────────────────────────── */}
+        <p className="text-[10px] font-mono text-[#555555] leading-relaxed">
+          This page is part of the{' '}
+          <Link
+            href="/free-developer-tools"
+            className="text-[#888888] hover:text-[#F9F9F9] underline underline-offset-4 decoration-[#333333] transition-none"
+          >
+            collection of 21 free developer tools
+          </Link>
+          . Each tool runs entirely in your browser — no signup, no server upload.
+        </p>
+
         {/* ── CTA ─────────────────────────────────────── */}
         <div className="bg-[#000000] border border-[#333333] p-4 md:p-6 space-y-3">
           <p className="text-xs md:text-sm font-mono font-bold text-[#F9F9F9]">
