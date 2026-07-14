@@ -254,6 +254,20 @@ export const TOOLS: Tool[] = [
     color: 'indigo'
   },
   {
+    slug: 'markdown-beautifier',
+    name: 'Markdown Beautifier',
+    description: 'Beautify and clean up messy markdown online. Fix malformed tables, normalize spacing and indentation, correct bold/italic formatting.',
+    shortDescription: 'Clean and beautify messy markdown',
+    category: 'developer-tools',
+    icon: 'FileText',
+    searchKeyword: 'markdown beautifier',
+    monthlySearches: 50000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Custom rules, batch processing, CLI export',
+    color: 'indigo'
+  },
+  {
     slug: 'html-playground',
     name: 'HTML Playground',
     description: 'Write HTML, CSS, and JavaScript and see a live preview instantly. Free mini CodePen alternative, no signup needed.',
@@ -266,6 +280,20 @@ export const TOOLS: Tool[] = [
     buildPriority: 4,
     proFeature: 'Save & share snippets, embed on any page',
     color: 'orange'
+  },
+  {
+    slug: 'http-status-codes',
+    name: 'HTTP Status Codes Reference',
+    description: 'Browse all standard HTTP status codes organized by category. Search by code or keyword, filter by 1xx/2xx/3xx/4xx/5xx, and copy codes to clipboard. Free online developer reference.',
+    shortDescription: 'Browse and search all HTTP status codes',
+    category: 'developer-tools',
+    icon: 'Search',
+    searchKeyword: 'http status codes reference',
+    monthlySearches: 200000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Copy with description, export as reference sheet',
+    color: 'blue'
   },
   {
     slug: 'qr-code-decoder',
@@ -380,6 +408,20 @@ export const TOOLS: Tool[] = [
     color: 'blue'
   },
   {
+    slug: 'sql-formatter',
+    name: 'SQL Formatter & Beautifier',
+    description: 'Format and beautify SQL queries with support for 17 SQL dialects. Customize indentation, keyword casing, and more. Client-side processing — your SQL never leaves your machine.',
+    shortDescription: 'Format SQL queries with multi-dialect support',
+    category: 'developer-tools',
+    icon: 'Braces',
+    searchKeyword: 'sql formatter beautifier',
+    monthlySearches: 150000,
+    competition: 'medium',
+    buildPriority: 1,
+    proFeature: 'Batch formatting, dialect-aware linting, CI integration',
+    color: 'blue'
+  },
+  {
     slug: 'svg-to-jsx',
     name: 'SVG to React/JSX Converter',
     description: 'Convert SVG markup to React JSX component syntax instantly. Handles attributes, camelCase props, and inline styles for React, Preact, and Vue.',
@@ -462,6 +504,174 @@ export const TOOLS: Tool[] = [
     buildPriority: 4,
     proFeature: 'Historical DNS change tracking, SSL chain analyzer, email alerts on expiry',
     color: 'blue'
+  },
+  {
+    slug: 'css-gradient-generator',
+    name: 'CSS Gradient Generator',
+    description: 'Create beautiful CSS gradients visually. Supports linear, radial, and conic gradients with custom color stops, positions, and angles. Live preview and one-click CSS code copy.',
+    shortDescription: 'Visual CSS gradient generator with live preview',
+    category: 'developer-tools',
+    icon: 'Palette',
+    searchKeyword: 'css gradient generator',
+    monthlySearches: 90000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Gradient presets, Tailwind output, multiple stop layers',
+    color: 'purple'
+  },
+  {
+    slug: 'css-box-shadow-generator',
+    name: 'CSS Box Shadow Generator',
+    description: 'Create custom box shadows visually. Configure offset, blur, spread, color, and inset for multiple shadow layers. Live preview on a demo element with one-click CSS copy.',
+    shortDescription: 'Visual box shadow builder with multi-layer support',
+    category: 'developer-tools',
+    icon: 'LayoutGrid',
+    searchKeyword: 'css box shadow generator',
+    monthlySearches: 50000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Layered shadows, preset library, export to Tailwind',
+    color: 'violet'
+  },
+  {
+    slug: 'case-converter',
+    name: 'Case Converter',
+    description: 'Convert text between camelCase, snake_case, kebab-case, PascalCase, UPPER_CASE, Title Case, dot.case, CONSTANT_CASE, and path/case. Free online developer case converter.',
+    shortDescription: 'Convert text between naming conventions',
+    category: 'developer-tools',
+    icon: 'Code',
+    searchKeyword: 'case converter camelCase snake_case',
+    monthlySearches: 50000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Batch conversion, regex-based custom patterns, API endpoint',
+    color: 'slate'
+  },
+  {
+    slug: 'lorem-ipsum-generator',
+    name: 'Lorem Ipsum Generator',
+    description: 'Generate lorem ipsum placeholder text for your designs and layouts. Customize paragraphs, sentences, or words. HTML or plain text output. Free online dummy text generator.',
+    shortDescription: 'Generate lorem ipsum placeholder text',
+    category: 'developer-tools',
+    icon: 'FileText',
+    searchKeyword: 'lorem ipsum generator placeholder text',
+    monthlySearches: 170000,
+    competition: 'medium',
+    buildPriority: 1,
+    proFeature: 'Custom word lists, Markdown output, character/word limits',
+    color: 'indigo'
+  },
+  {
+    slug: 'html-to-markdown-converter',
+    name: 'HTML to Markdown Converter',
+    description: 'Convert HTML to clean Markdown online. Supports headings, lists, tables, code blocks, links, and images. Client-side processing. Free HTML to MD converter for content migration.',
+    shortDescription: 'Convert HTML markup to clean Markdown',
+    category: 'developer-tools',
+    icon: 'ArrowLeftRight',
+    searchKeyword: 'html to markdown converter',
+    monthlySearches: 70000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Batch URL conversion, custom heading styles, frontmatter generation',
+    color: 'green'
+  },
+  {
+    slug: 'js-minifier',
+    name: 'JavaScript Minifier',
+    description: 'Minify JavaScript code online. Strip comments, collapse whitespace, and compress JS for faster page loads. Free JS minifer, all client-side, no upload.',
+    shortDescription: 'Minify and compress JavaScript code',
+    category: 'developer-tools',
+    icon: 'FileCode',
+    searchKeyword: 'javascript minifier js compress',
+    monthlySearches: 110000,
+    competition: 'medium',
+    buildPriority: 1,
+    proFeature: 'Terser integration, source map support, module bundler API',
+    color: 'yellow'
+  },
+  {
+    slug: 'color-palette-generator',
+    name: 'Color Palette Generator',
+    description: 'Generate beautiful color palettes from any base color. Monochromatic, analogous, complementary, triadic, and tetradic harmony schemes. Free online color scheme generator.',
+    shortDescription: 'Generate harmonious color schemes',
+    category: 'developer-tools',
+    icon: 'Palette',
+    searchKeyword: 'color palette generator scheme',
+    monthlySearches: 80000,
+    competition: 'medium',
+    buildPriority: 1,
+    proFeature: 'Image color extraction, WCAG contrast checking, Tailwind export',
+    color: 'pink'
+  },
+  {
+    slug: 'html-to-jsx-converter',
+    name: 'HTML to JSX Converter',
+    description: 'Convert HTML to React JSX online. Transform class to className, for to htmlFor, kebab-case to camelCase attributes. Free HTML to JSX converter, all client-side.',
+    shortDescription: 'Convert HTML markup to React JSX',
+    category: 'developer-tools',
+    icon: 'Code',
+    searchKeyword: 'html to jsx converter react',
+    monthlySearches: 40000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Babel AST conversion, TypeScript prop generation, batch URL processing',
+    color: 'blue'
+  },
+  {
+    slug: 'html-minifier',
+    name: 'HTML Minifier',
+    description: 'Minify HTML online. Strip comments, collapse whitespace, compress HTML for faster page loads. Free HTML compressor, all client-side processing, no server upload.',
+    shortDescription: 'Compress and minify HTML code',
+    category: 'developer-tools',
+    icon: 'FileCode',
+    searchKeyword: 'html minifier compressor online',
+    monthlySearches: 60000,
+    competition: 'medium',
+    buildPriority: 1,
+    proFeature: 'CSS/JS inline minification, template engine extraction, batch URL minification',
+    color: 'orange'
+  },
+  {
+    slug: 'ip-address-lookup',
+    name: 'IP Address Lookup',
+    description: 'Find your public IP address, ISP, city, region, country, coordinates, and timezone. Free online IP lookup with geolocation data, no signup required.',
+    shortDescription: 'Look up your public IP and geolocation',
+    category: 'developer-tools',
+    icon: 'Globe',
+    searchKeyword: 'ip address lookup what is my ip',
+    monthlySearches: 200000,
+    competition: 'high',
+    buildPriority: 1,
+    proFeature: 'DNS record lookup, IP blacklist check, VPN detection',
+    color: 'blue'
+  },
+  {
+    slug: 'cron-translator',
+    name: 'Cron Schedule Translator',
+    description: 'Translate cron expressions into plain English. Paste any cron string like "*/15 * * * 1-5" and see the schedule explained in simple human-readable language.',
+    shortDescription: 'Decode cron expressions to English',
+    category: 'developer-tools',
+    icon: 'Clock',
+    searchKeyword: 'cron schedule translator expression decoder',
+    monthlySearches: 30000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'Next 100 fire times, calendar view, custom timezone support',
+    color: 'green'
+  },
+  {
+    slug: 'regex-generator',
+    name: 'Regex Generator',
+    description: 'Generate regular expression patterns from example text and target matches. Input sample strings, specify what to match, and get a working regex pattern automatically.',
+    shortDescription: 'Generate regex from text examples',
+    category: 'developer-tools',
+    icon: 'Code',
+    searchKeyword: 'regex generator pattern creator',
+    monthlySearches: 30000,
+    competition: 'low',
+    buildPriority: 1,
+    proFeature: 'AI-powered pattern inference, batch generation, export to multiple languages',
+    color: 'amber'
   }
 ]
 
@@ -493,7 +703,10 @@ export const BUILT_TOOLS = [
   'url-encoder',
   'uuid-generator',
   'hex-to-rgb',
+  'html-to-markdown-converter',
+  'http-status-codes',
   'binary-converter',
+  'case-converter',
   'code-formatter',
   'json-csv-converter',
   'yaml-json-converter',
@@ -503,6 +716,7 @@ export const BUILT_TOOLS = [
   'qr-code-decoder',
   'webhook-tester',
   'jwt-decoder',
+  'lorem-ipsum-generator',
   'cron-expression-builder',
   'curl-to-code',
   'gitignore-generator',
@@ -511,19 +725,112 @@ export const BUILT_TOOLS = [
   'svg-to-jsx',
   'meta-tag-generator',
   'robots-sitemap-generator',
+  'sql-formatter',
+  'css-box-shadow-generator',
+  'css-gradient-generator',
   'css-grid-generator',
   'iban-validator',
-  'dns-ssl-checker'
+  'dns-ssl-checker',
+  'js-minifier',
+  'color-palette-generator',
+  'html-to-jsx-converter',
+  'html-minifier',
+  'markdown-beautifier',
+  'ip-address-lookup',
+  'cron-translator',
+  'regex-generator'
 ]
 
-// Featured tools shown on the home page (not all 21 to avoid endless scrolling)
+// Featured tools shown on the home page (top 12 only)
 export const FEATURED_TOOLS = [
   'jwt-decoder',
   'json-formatter',
-  'password-generator',
-  'hash-generator',
-  'uuid-generator',
   'code-formatter',
-  'diff-checker',
   'markdown-editor',
+  'diff-checker',
+  'unix-timestamp-converter',
+  'base64-encoder',
+  'regex-tester',
+  'hash-generator',
+  'sql-formatter',
+  'js-minifier',
+  'css-gradient-generator',
 ]
+
+// Curated related-tool pairs for intelligent cross-linking
+// Each tool maps to 4-6 related tool slugs it should link to.
+// Tools not listed fall back to random built tools.
+export const RELATED_TOOLS: Record<string, string[]> = {
+  // ── Formatters & Beautifiers ──
+  'json-formatter': ['code-formatter', 'yaml-json-converter', 'json-csv-converter', 'sql-formatter', 'regex-tester'],
+  'code-formatter': ['json-formatter', 'js-minifier', 'html-minifier', 'diff-checker', 'html-to-jsx-converter', 'markdown-beautifier'],
+  'diff-checker': ['code-formatter', 'json-formatter', 'regex-tester', 'json-csv-converter'],
+  'sql-formatter': ['json-formatter', 'code-formatter', 'yaml-json-converter', 'yaml-json-converter'],
+  'yaml-json-converter': ['json-formatter', 'json-csv-converter', 'code-formatter', 'sql-formatter'],
+  'json-csv-converter': ['yaml-json-converter', 'json-formatter', 'code-formatter', 'diff-checker'],
+  'markdown-beautifier': ['markdown-editor', 'html-to-markdown-converter', 'code-formatter', 'diff-checker', 'case-converter'],
+
+  // ── Encoders & Decoders ──
+  'base64-encoder': ['url-encoder', 'hash-generator', 'jwt-decoder', 'binary-converter'],
+  'url-encoder': ['base64-encoder', 'jwt-decoder', 'hash-generator', 'markdown-editor'],
+  'jwt-decoder': ['base64-encoder', 'hash-generator', 'url-encoder', 'unix-timestamp-converter'],
+
+  // ── Generators ──
+  'password-generator': ['hash-generator', 'uuid-generator', 'lorem-ipsum-generator', 'qr-code-generator'],
+  'uuid-generator': ['hash-generator', 'password-generator', 'lorem-ipsum-generator', 'regex-tester'],
+  'lorem-ipsum-generator': ['password-generator', 'uuid-generator', 'markdown-editor', 'html-playground'],
+  'hash-generator': ['password-generator', 'base64-encoder', 'jwt-decoder', 'uuid-generator', 'qr-code-generator'],
+
+  // ── Web / Frontend Tools ──
+  'html-playground': ['code-formatter', 'html-to-jsx-converter', 'markdown-editor', 'css-gradient-generator', 'color-palette-generator'],
+  'html-to-jsx-converter': ['code-formatter', 'html-playground', 'svg-to-jsx', 'html-minifier'],
+  'svg-to-jsx': ['html-to-jsx-converter', 'code-formatter', 'color-palette-generator', 'html-playground'],
+  'markdown-editor': ['html-playground', 'diff-checker', 'regex-tester', 'code-formatter', 'html-to-markdown-converter', 'markdown-beautifier'],
+  'html-to-markdown-converter': ['markdown-editor', 'markdown-beautifier', 'html-playground', 'code-formatter', 'html-minifier'],
+  'meta-tag-generator': ['html-playground', 'code-formatter', 'robots-sitemap-generator', 'html-minifier'],
+  'robots-sitemap-generator': ['meta-tag-generator', 'html-playground', 'http-status-codes', 'url-encoder'],
+
+  // ── Testing / API Tools ──
+  'regex-tester': ['json-formatter', 'code-formatter', 'diff-checker', 'case-converter', 'hash-generator'],
+  'webhook-tester': ['api-response-validator', 'curl-to-code', 'http-status-codes', 'json-formatter'],
+  'api-response-validator': ['webhook-tester', 'curl-to-code', 'http-status-codes', 'json-formatter'],
+  'curl-to-code': ['api-response-validator', 'webhook-tester', 'http-status-codes', 'json-formatter'],
+  'http-status-codes': ['api-response-validator', 'webhook-tester', 'curl-to-code', 'unix-timestamp-converter'],
+
+  // ── Design Tools ──
+  'hex-to-rgb': ['color-palette-generator', 'css-gradient-generator', 'css-box-shadow-generator', 'css-grid-generator'],
+  'color-palette-generator': ['hex-to-rgb', 'css-gradient-generator', 'css-box-shadow-generator', 'css-grid-generator'],
+  'css-gradient-generator': ['color-palette-generator', 'hex-to-rgb', 'css-box-shadow-generator', 'css-grid-generator'],
+  'css-box-shadow-generator': ['css-gradient-generator', 'color-palette-generator', 'hex-to-rgb', 'css-grid-generator'],
+  'css-grid-generator': ['css-gradient-generator', 'css-box-shadow-generator', 'hex-to-rgb', 'code-formatter'],
+
+  // ── Conversion Tools ──
+  'binary-converter': ['hex-to-rgb', 'base64-encoder', 'hash-generator', 'unix-timestamp-converter'],
+  'case-converter': ['regex-tester', 'code-formatter', 'diff-checker', 'html-to-jsx-converter'],
+  'unix-timestamp-converter': ['jwt-decoder', 'hash-generator', 'cron-expression-builder', 'http-status-codes'],
+  'cron-expression-builder': ['unix-timestamp-converter', 'hash-generator', 'uuid-generator', 'json-formatter'],
+
+  // ── Minifiers / Optimizers ──
+  'js-minifier': ['html-minifier', 'code-formatter', 'json-formatter', 'hash-generator', 'regex-tester'],
+  'html-minifier': ['js-minifier', 'code-formatter', 'html-to-jsx-converter', 'css-gradient-generator', 'css-box-shadow-generator'],
+
+  // ── Code / Project Tools ──
+  'gitignore-generator': ['curl-to-code', 'meta-tag-generator', 'robots-sitemap-generator', 'code-formatter'],
+  'code-playground': ['html-playground', 'markdown-editor', 'code-formatter', 'json-formatter'],
+  'json-to-typescript': ['json-formatter', 'json-csv-converter', 'yaml-json-converter', 'code-formatter'],
+
+  // ── Specialized ──
+  'qr-code-generator': ['qr-code-decoder', 'password-generator', 'uuid-generator', 'hash-generator'],
+  'qr-code-decoder': ['qr-code-generator', 'base64-encoder', 'jwt-decoder', 'binary-converter'],
+  'dns-ssl-checker': ['http-status-codes', 'api-response-validator', 'webhook-tester', 'curl-to-code'],
+  'iban-validator': ['regex-tester', 'case-converter', 'code-formatter', 'binary-converter'],
+
+  // ── IP / DNS Tools ──
+  'ip-address-lookup': ['dns-ssl-checker', 'http-status-codes', 'unix-timestamp-converter', 'jwt-decoder', 'hash-generator'],
+
+  // ── Cron Tools ──
+  'cron-translator': ['cron-expression-builder', 'unix-timestamp-converter', 'uuid-generator', 'hash-generator'],
+
+  // ── Regex Tools ──
+  'regex-generator': ['regex-tester', 'code-formatter', 'json-formatter', 'diff-checker', 'case-converter'],
+}

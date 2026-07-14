@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next'
-import { TOOLS, BUILT_TOOLS } from '@/lib/constants'
+import { TOOLS, BUILT_TOOLS, SITE_CONFIG } from '@/lib/constants'
 import { SEO_VARIANTS } from '@/lib/seo-variants'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://toolhub.com'
+  const baseUrl = SITE_CONFIG.url
 
   const toolPages = TOOLS
     .filter(t => BUILT_TOOLS.includes(t.slug))
@@ -26,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/tools`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${baseUrl}/free-developer-tools`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: `${baseUrl}/badge`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.4 },
   ]
 
   return [...staticPages, ...toolPages, ...variantPages]

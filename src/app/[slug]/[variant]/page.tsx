@@ -83,6 +83,22 @@ export default function VariantPage({
         }}
       />
 
+      {/* JSON-LD: WebPage with freshness dates */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: entry.meta.title,
+            description: entry.meta.description,
+            url: canonicalUrl,
+            datePublished: '2026-01-15',
+            dateModified: '2026-07-12',
+          }),
+        }}
+      />
+
       {/* JSON-LD: FAQPage */}
       {entry.faq.length > 0 && (
         <script
@@ -157,7 +173,7 @@ export default function VariantPage({
             href="/free-developer-tools"
             className="text-[#888888] hover:text-[#F9F9F9] underline underline-offset-4 decoration-[#333333] transition-none"
           >
-            collection of 21 free developer tools
+            collection of 46 free developer tools
           </Link>
           . Each tool runs entirely in your browser — no signup, no server upload.
         </p>

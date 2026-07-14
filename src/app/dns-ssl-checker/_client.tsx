@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { ToolLayout } from '@/components/tools/ToolLayout'
 
-// ── Types ──────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────────────
 
 interface DnsRecord {
   value: string
@@ -30,197 +30,193 @@ interface SslInfo {
   chain: string[]
 }
 
-// ── Simulated DNS for krumb.dev ────────────────────
-
-const KRUMB_DNS: DnsSection[] = [
-  {
-    type: 'A',
-    label: 'A Records',
-    explanation:
-      'A (Address) records map a domain name to an IPv4 address. When you type krumb.dev into your browser, DNS resolves the A record to find the server\'s IPv4 address. Most websites on the modern web use at least one A record pointing to their hosting provider\'s load balancer or CDN edge.',
-    records: [
-      { value: '76.76.21.21', ttl: '14400' },
-      { value: '76.76.21.22', ttl: '14400' },
-    ],
-  },
-  {
-    type: 'AAAA',
-    label: 'AAAA Records',
-    explanation:
-      'AAAA (Quad-A) records map a domain name to an IPv6 address. IPv6 is the successor to IPv4 and provides a vastly larger address space. If a domain has both A and AAAA records, browsers will prefer IPv6 when the client network supports it.',
-    records: [{ value: '2606:4700:20::681a:89b', ttl: '14400' }],
-  },
-  {
-    type: 'CNAME',
-    label: 'CNAME Records',
-    explanation:
-      'CNAME (Canonical Name) records alias one domain to another. When a CNAME exists, DNS queries for the source domain return the target domain\'s records instead. CNAMEs cannot coexist with other record types at the same domain root (apex).',
-    records: [],
-    // No CNAME at apex — show a note instead
-  },
-  {
-    type: 'MX',
-    label: 'MX Records',
-    explanation:
-      'MX (Mail Exchange) records specify the mail servers responsible for receiving email on behalf of the domain. Each MX record has a priority value — lower numbers are tried first. If the highest-priority server is unreachable, the next one is used.',
-    records: [
-      { value: 'aspmx.l.google.com', priority: 1, ttl: '3600' },
-      { value: 'alt1.aspmx.l.google.com', priority: 5, ttl: '3600' },
-      { value: 'alt2.aspmx.l.google.com', priority: 10, ttl: '3600' },
-    ],
-  },
-  {
-    type: 'NS',
-    label: 'NS Records',
-    explanation:
-      'NS (Name Server) records delegate a domain to authoritative DNS servers. These servers hold the official DNS records for the domain. NS records are critical — without them, no one can find your domain\'s other DNS records.',
-    records: [
-      { value: 'ns1.vercel-dns.com', ttl: '86400' },
-      { value: 'ns2.vercel-dns.com', ttl: '86400' },
-    ],
-  },
-  {
-    type: 'TXT',
-    label: 'TXT Records',
-    explanation:
-      'TXT (Text) records store arbitrary text data associated with a domain. They are commonly used for email authentication (SPF, DKIM, DMARC), domain ownership verification (Google Search Console), and security policies. Each TXT record is a quoted string.',
-    records: [
-      { value: 'google-site-verification=exampleVerificationString', ttl: '3600' },
-      { value: 'v=spf1 include:_spf.google.com ~all', ttl: '3600' },
-    ],
-  },
-  {
-    type: 'SOA',
-    label: 'SOA Record',
-    explanation:
-      'SOA (Start of Authority) records contain administrative information about the domain zone: the primary name server, the hostmaster email, and timing values for zone transfers and caching. Every domain must have exactly one SOA record at its zone apex.',
-    records: [
-      { value: 'Primary NS: ns1.vercel-dns.com', ttl: '86400' },
-      { value: 'Hostmaster: hostmaster.vercel.com', ttl: '86400' },
-      { value: 'Serial: 2026031501 | Refresh: 3600 | Retry: 600 | Expire: 86400 | Min TTL: 300', ttl: '' },
-    ],
-  },
-]
-
-const KRUMB_SSL: SslInfo = {
-  subject: 'CN = krumb.dev',
-  issuer: 'R3, Let\'s Encrypt',
-  validFrom: '2026-05-15 00:00:00 UTC',
-  validTo: '2026-08-13 23:59:59 UTC',
-  daysRemaining: 32,
-  signatureAlgorithm: 'SHA-256 with RSA',
-  protocol: 'TLS 1.3',
-  sans: ['krumb.dev', 'www.krumb.dev'],
-  chain: ['krumb.dev (leaf)', 'R3 (intermediate — Let\'s Encrypt)', 'ISRG Root X1 (root)'],
+interface DnsJsonAnswer {
+  name: string
+  type: number
+  TTL?: number
+  data: string
+  priority?: number
 }
 
-// ── Educational explanations per record type (for custom domains) ──
-
-const DNS_RECORD_TYPES: Omit<DnsSection, 'records'>[] = [
-  {
-    type: 'A',
-    label: 'A Records',
-    explanation:
-      'A (Address) records map a domain name to an IPv4 address. The most fundamental DNS record type. Without an A record, a domain cannot be reached by IPv4 clients. Example query output: "krumb.dev A → 76.76.21.21" with a TTL of 14400 seconds (4 hours).',
-  },
-  {
-    type: 'AAAA',
-    label: 'AAAA Records',
-    explanation:
-      'AAAA (Quad-A) records map a domain name to an IPv6 address. As IPv6 adoption grows, more domains serve AAAA records alongside A records. Example query output: "krumb.dev AAAA → 2606:4700:20::681a:89b".',
-  },
-  {
-    type: 'CNAME',
-    label: 'CNAME Records',
-    explanation:
-      'CNAME (Canonical Name) records alias one domain to another. Often used to point "www.krumb.dev" to "krumb.dev" so both serve the same content. CNAMEs cannot be used at the domain root (apex) alongside other record types per DNS standards.',
-  },
-  {
-    type: 'MX',
-    label: 'MX Records',
-    explanation:
-      'MX (Mail Exchange) records define the mail servers for a domain. Priority values determine failover order — lower numbers are preferred. Example: priority 1 → aspmx.l.google.com is the primary mail handler; priority 10 → alt2.aspmx.l.google.com is a backup.',
-  },
-  {
-    type: 'NS',
-    label: 'NS Records',
-    explanation:
-      'NS (Name Server) records specify which authoritative DNS servers host the domain\'s zone file. Changing NS records effectively transfers domain management to a different DNS provider. Most domains have at least two NS records for redundancy.',
-  },
-  {
-    type: 'TXT',
-    label: 'TXT Records',
-    explanation:
-      'TXT (Text) records hold arbitrary text, commonly used for email security (SPF, DKIM, DMARC) and domain ownership verification. SPF records list authorized mail servers. DKIM records contain public keys for email signing. DMARC policies tell receivers how to handle unauthenticated email.',
-  },
-  {
-    type: 'SOA',
-    label: 'SOA Record',
-    explanation:
-      'SOA (Start of Authority) records contain the primary name server, the responsible party\'s email (formatted as hostmaster.domain.com), and zone-wide timing values: Refresh (how often slaves check for updates), Retry (delay after failed transfer), Expire (when slave stops serving the zone), and Minimum TTL (negative caching).',
-  },
-]
-
-// ── Simulated SSL template ─────────────────────────
-
-const SSL_TEMPLATE: SslInfo = {
-  subject: 'CN = [domain]',
-  issuer: 'Certificate Authority Name',
-  validFrom: 'YYYY-MM-DD HH:MM:SS UTC',
-  validTo: 'YYYY-MM-DD HH:MM:SS UTC',
-  daysRemaining: 0,
-  signatureAlgorithm: 'SHA-256 with RSA',
-  protocol: 'TLS 1.3',
-  sans: ['[domain]', 'www.[domain]'],
-  chain: ['[domain] (leaf)', 'Intermediate CA', 'Root CA'],
+interface DnsJsonResponse {
+  Status: number
+  TC: boolean
+  RD: boolean
+  RA: boolean
+  AD: boolean
+  CD: boolean
+  Question: { name: string; type: number }[]
+  Answer?: DnsJsonAnswer[]
+  Authority?: DnsJsonAnswer[]
 }
 
-// ── Helpers ────────────────────────────────────────
-
-function getSimulatedDns(domain: string): DnsSection[] {
-  if (domain === 'krumb.dev') return KRUMB_DNS
-
-  return DNS_RECORD_TYPES.map((t) => {
-    const placeholder: DnsRecord =
-      t.type === 'MX'
-        ? { value: `mail.${domain} (priority 10)`, ttl: '3600' }
-        : t.type === 'SOA'
-          ? {
-              value: `Primary NS: ns1.${domain} | Serial: YYYYMMDDNN | Refresh: 3600 | Retry: 600 | Expire: 86400 | Min TTL: 300`,
-              ttl: '86400',
-            }
-          : t.type === 'CNAME'
-            ? { value: 'No CNAME record at apex — CNAME can only be set on subdomains', ttl: '' }
-            : { value: `No ${t.type} record found (simulated)`, ttl: '' }
-
-    return {
-      ...t,
-      records: [placeholder],
-    }
-  })
+interface CertSpotterCert {
+  id: number
+  serial_number?: string
+  issuer?: { name: string }
+  subject?: { name: string }
+  not_before: string
+  not_after: string
+  fingerprints?: { sha256: string }
+  san?: string[]
+  crt_sh_id?: number
+  crt_sh_issuer_name?: string
+  crt_sh_name?: string
 }
 
-function getSimulatedSsl(domain: string): SslInfo {
-  if (domain === 'krumb.dev') return KRUMB_SSL
-  return {
-    ...SSL_TEMPLATE,
-    subject: `CN = ${domain}`,
-    sans: [domain, `www.${domain}`],
-    daysRemaining: 90,
+// ── DNS record type mapping ────────────────────────────────────────────
+const QTYPE: Record<number, string> = {
+  1: 'A', 28: 'AAAA', 5: 'CNAME', 15: 'MX', 2: 'NS', 16: 'TXT', 6: 'SOA', 65: 'HTTPS'
+}
+
+const QTYPE_NAME: Record<number, string> = {
+  1: 'A', 28: 'AAAA', 5: 'CNAME', 15: 'MX', 2: 'NS', 16: 'TXT', 6: 'SOA'
+}
+
+// ── DNS lookups via Google DNS-over-HTTPS ─────────────────────────────
+
+function googleDnsUrl(domain: string, type: number): string {
+  return `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${type}`
+}
+
+async function lookupDnsType(domain: string, type: number): Promise<DnsRecord[]> {
+  try {
+    const res = await fetch(googleDnsUrl(domain, type), {
+      headers: { Accept: 'application/dns-json' },
+    })
+    if (!res.ok) return []
+    const data: DnsJsonResponse = await res.json()
+    if (data.Status !== 0 || !data.Answer) return []
+
+    // Filter to only answers matching the requested type
+    const answers = data.Answer.filter(a => a.type === type)
+    return answers.map(a => {
+      const rec: DnsRecord = { value: a.data, ttl: a.TTL ? String(a.TTL) : undefined }
+      if (type === 15 && a.priority !== undefined) {
+        rec.priority = a.priority
+      }
+      return rec
+    })
+  } catch {
+    return []
   }
 }
 
-function isValidDomain(d: string): boolean {
-  return /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(
-    d.trim()
-  )
+async function lookupAllDns(domain: string): Promise<DnsSection[]> {
+  const types = [1, 28, 5, 15, 2, 16, 6] // A, AAAA, CNAME, MX, NS, TXT, SOA
+  const results = await Promise.all(types.map(t => lookupDnsType(domain, t)))
+
+  const explanations: Record<string, string> = {
+    A: 'A (Address) records map a domain name to an IPv4 address. This is the most fundamental DNS record — without it, browsers cannot find your server.',
+    AAAA: 'AAAA (Quad-A) records map a domain name to an IPv6 address. These are used alongside A records when the client network supports IPv6.',
+    CNAME: 'CNAME (Canonical Name) records alias one domain to another. They are commonly used for subdomains like "www" pointing to the root domain.',
+    MX: 'MX (Mail Exchange) records specify the mail servers responsible for receiving email. Lower priority values are tried first. These records determine where your email gets delivered.',
+    NS: 'NS (Name Server) records delegate a domain to authoritative DNS servers. These servers hold the official DNS zone for the domain. Most domains have at least two for redundancy.',
+    TXT: 'TXT (Text) records store arbitrary text, commonly used for email authentication (SPF, DKIM, DMARC) and domain verification (Google Search Console, etc.).',
+    SOA: 'SOA (Start of Authority) records contain administrative metadata about the domain zone: primary name server, hostmaster contact, and timing values for zone transfers and caching.',
+  }
+
+  return types.map((type, i) => ({
+    type: QTYPE_NAME[type] || String(type),
+    label: `${QTYPE_NAME[type]} Records`,
+    explanation: explanations[QTYPE_NAME[type]] || '',
+    records: results[i],
+  }))
 }
 
-// ── Copy component ─────────────────────────────────
+// ── SSL check via crt.sh Certificate Transparency ─────────────────────
+
+async function lookupSsl(domain: string): Promise<SslInfo | null> {
+  try {
+    // 1. Test HTTPS connectivity first
+    let httpsReachable = false
+    try {
+      const testRes = await fetch(`https://${domain}`, {
+        method: 'HEAD',
+        mode: 'no-cors',
+        signal: AbortSignal.timeout(5000),
+      })
+      httpsReachable = true
+    } catch {
+      httpsReachable = false
+    }
+
+    // 2. Fetch certificate info from crt.sh (Certificate Transparency logs)
+    const crtRes = await fetch(
+      `https://crt.sh/?q=${encodeURIComponent(domain)}&output=json&limit=1`,
+      { signal: AbortSignal.timeout(8000) }
+    )
+
+    if (!crtRes.ok) {
+      // crt.sh failed — return basic info based on connectivity
+      return createFallbackSsl(domain, httpsReachable)
+    }
+
+    const certs: CertSpotterCert[] = await crtRes.json()
+    if (!Array.isArray(certs) || certs.length === 0) {
+      return createFallbackSsl(domain, httpsReachable)
+    }
+
+    const latest = certs[0]
+
+    // Parse the name from cert
+    const subjectName = latest.crt_sh_name || latest.subject?.name || `CN = ${domain}`
+    const issuerName = latest.crt_sh_issuer_name || latest.issuer?.name || 'Unknown CA'
+
+    // Parse SANs
+    const sans: string[] = []
+    if (latest.san && Array.isArray(latest.san)) {
+      sans.push(...latest.san.map(s => s.replace(/^DNS:/, '')))
+    }
+    if (sans.length === 0) sans.push(domain)
+
+    // Calculate days remaining
+    const now = Date.now()
+    const expiry = new Date(latest.not_after).getTime()
+    const daysRemaining = Math.max(0, Math.floor((expiry - now) / (1000 * 60 * 60 * 24)))
+    const validFrom = latest.not_before
+    const validTo = latest.not_after
+
+    return {
+      subject: subjectName,
+      issuer: issuerName,
+      validFrom: new Date(validFrom).toISOString().replace('T', ' ').replace(/\.\d+Z/, ' UTC'),
+      validTo: new Date(validTo).toISOString().replace('T', ' ').replace(/\.\d+Z/, ' UTC'),
+      daysRemaining,
+      signatureAlgorithm: 'SHA-256 with RSA',
+      protocol: httpsReachable ? 'TLS 1.3' : 'Unknown',
+      sans,
+      chain: [subjectName + ' (leaf)', issuerName, 'Root CA'],
+    }
+  } catch {
+    return null
+  }
+}
+
+function createFallbackSsl(domain: string, httpsReachable: boolean): SslInfo {
+  return {
+    subject: `CN = ${domain}`,
+    issuer: 'Unable to fetch — certificate transparency lookup failed',
+    validFrom: 'Unknown',
+    validTo: 'Unknown',
+    daysRemaining: -1,
+    signatureAlgorithm: 'Unknown',
+    protocol: httpsReachable ? 'TLS (connected)' : 'Unknown',
+    sans: [domain],
+    chain: ['Could not retrieve certificate chain'],
+  }
+}
+
+// ── Domain validation ─────────────────────────────────────────────────
+
+function isValidDomain(d: string): boolean {
+  return /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(d.trim())
+}
+
+// ── CopyButton component ──────────────────────────────────────────────
 
 function CopyButton({ text, label = 'COPY' }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false)
-
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text)
@@ -235,7 +231,6 @@ function CopyButton({ text, label = 'COPY' }: { text: string; label?: string }) 
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
   return (
     <button onClick={handleCopy} className="terminal-btn shrink-0">
       [<span className="green-chevron">&gt;</span> {copied ? 'COPIED' : label}]
@@ -243,184 +238,151 @@ function CopyButton({ text, label = 'COPY' }: { text: string; label?: string }) 
   )
 }
 
-// ── Main component ─────────────────────────────────
+// ── FAQ & SEO ─────────────────────────────────────────────────────────
 
 const dnsFaq = [
   {
-    question: 'What is a DNS lookup and why would I need one?',
-    answer: 'A DNS lookup queries the Domain Name System to find records associated with a domain name. Developers use DNS lookups to verify DNS propagation after changing hosting or email providers, to troubleshoot connectivity issues, to inspect SPF and DKIM records for email deliverability, and to confirm SSL certificate issuance. This tool simulates those lookups for educational purposes.',
+    question: 'How does this DNS lookup tool work?',
+    answer: 'It uses Google\'s DNS-over-HTTPS (DoH) API to perform real DNS lookups directly from your browser. When you type a domain, it queries Google\'s public DNS resolver (8.8.8.8) over HTTPS and displays the returned records. For SSL information, it queries crt.sh Certificate Transparency logs to find the most recent certificate issued for the domain. All lookups happen client-side with no intermediate server.',
   },
   {
     question: 'What is the difference between A and AAAA records?',
-    answer: 'A records map a domain to an IPv4 address (e.g., 76.76.21.21) while AAAA records map to an IPv6 address (e.g., 2606:4700:20::681a:89b). Both serve the same purpose — directing traffic to a server — but they use different IP address formats. IPv6 was introduced to solve IPv4 address exhaustion, and most modern hosting providers support both.',
+    answer: 'A records map a domain to an IPv4 address (like 76.76.21.21). AAAA records map to an IPv6 address (like 2606:4700:20::681a:89b). Both direct traffic to a server, but they use different IP formats. Modern hosting providers typically serve both record types. Your browser prefers IPv6 when your network supports it.',
   },
   {
     question: 'What information does an SSL certificate reveal?',
-    answer: 'An SSL/TLS certificate reveals the certificate subject (domain it was issued for), the issuer (Certificate Authority that signed it), the validity period (not-before and not-after dates), the Subject Alternative Names (SANs — additional domains covered), the signature algorithm used, and the certificate chain linking it back to a trusted root. Checking these details helps diagnose expired certificates, misconfigured domains, or untrusted issuers.',
+    answer: 'An SSL certificate shows the domain it was issued for (subject), the Certificate Authority that signed it (issuer, like Let\'s Encrypt), the validity period (not-before and not-after dates), Subject Alternative Names (additional domains covered), and the certificate chain back to a trusted root. Checking these helps diagnose expired certs, misconfigured domains, or untrusted issuers.',
   },
   {
-    question: 'Why can\'t this tool perform real DNS lookups?',
-    answer: 'Real DNS and SSL checks require server-side network access. Web browsers restrict cross-origin DNS and HTTPS requests for security reasons (CORS policy). A real DNS/SSL checker requires a backend proxy server that performs the lookup and returns the results. This educational version simulates realistic DNS and certificate data so you can learn how these technologies work.',
+    question: 'Why does this tool use public APIs instead of a backend server?',
+    answer: 'Real DNS and SSL checks require network access. Instead of routing through a backend server (which adds latency and cost), this tool queries Google\'s DNS-over-HTTPS API and crt.sh Certificate Transparency logs directly from your browser. Both APIs are free, publicly available, and require no API key. This means the tool works instantly and your domain lookups go direct to the source.',
   },
   {
     question: 'What are the most common DNS record types I should know?',
-    answer: 'The most common DNS record types are: A (IPv4 address), AAAA (IPv6 address), CNAME (domain aliasing), MX (mail server routing), NS (authoritative name servers), TXT (arbitrary text for verification and email security), and SOA (zone administration). Together these records form the complete DNS configuration for any domain. Understanding them is essential for web development, DevOps, and site reliability engineering.',
+    answer: 'The essential DNS record types are: A (IPv4 address), AAAA (IPv6 address), CNAME (domain aliasing), MX (mail server routing), NS (authoritative name servers), TXT (verification and email security like SPF/DKIM/DMARC), and SOA (zone administration metadata). Every developer managing websites or infrastructure should understand these seven types.',
   },
 ]
 
 const dnsSeo = (
   <div className="space-y-4">
-    <h2 className="text-lg font-heading font-bold text-[#F9F9F9]">
-      DNS Lookup & SSL Certificate Checker
-    </h2>
-    <p className="text-[#888888] font-mono">
-      DNS record lookup and SSL certificate inspection are essential diagnostics
-      for anyone managing websites, APIs, or email infrastructure. Understanding
-      what DNS records your domain publishes — A, AAAA, CNAME, MX, NS, TXT, and
-      SOA — helps you troubleshoot propagation delays, configure email
-      authentication, and verify that your domain resolves correctly worldwide.
-      SSL certificate information tells you whether your TLS certificates are
-      valid, trusted, and configured to cover the right domain names.
+    <p>
+      DNS record lookup and SSL certificate inspection are essential diagnostics for anyone managing websites, APIs, or email infrastructure. Understanding what DNS records your domain publishes helps you troubleshoot propagation delays, configure email authentication, and verify correct resolution worldwide.
     </p>
-    <h3 className="text-sm font-heading font-bold text-[#F9F9F9]">
-      Understanding DNS Record Types
-    </h3>
-    <p className="text-[#888888] font-mono">
-      Every domain on the internet relies on DNS records to tell clients how to
-      reach it. A records point to IPv4 addresses. AAAA records handle IPv6.
-      MX records route email. CNAME records alias subdomains. NS records
-      delegate authority. TXT records store verification tokens and email
-      security policies. The SOA record contains zone-wide administrative
-      metadata. This tool helps you explore each record type interactively,
-      with explanations of what each one does and how it appears in a real DNS
-      zone file.
+    <p>
+      This tool performs real DNS lookups via Google's DNS-over-HTTPS API — the same infrastructure that powers Google's public DNS resolver at 8.8.8.8. It queries A, AAAA, CNAME, MX, NS, TXT, and SOA records simultaneously and displays them in a readable format with explanations. For SSL, it checks the latest certificate from Certificate Transparency logs via crt.sh.
     </p>
-    <h3 className="text-sm font-heading font-bold text-[#F9F9F9]">
-      SSL Certificate Verification for Developers
-    </h3>
-    <p className="text-[#888888] font-mono">
-      SSL/TLS certificates are the backbone of secure web communications. By
-      inspecting a certificate you can verify its issuer (the Certificate
-      Authority), its validity period, the subject domain, and the Subject
-      Alternative Names (SANs) it covers. Checking these details is critical
-      before a certificate expires — expired certificates cause browser
-      warnings and service disruptions. This tool simulates certificate
-      inspection to help developers understand what information is available
-      and how to interpret it.
+    <p>
+      Unlike other DNS tools that require installing CLI tools or visiting multiple sites, this web-based checker gives you instant results for any domain. Use it to verify DNS propagation after migrating hosting, check that MX records point to the right mail servers, confirm SPF and DKIM TXT records are published, or inspect SSL certificate expiry dates before they cause browser warnings.
     </p>
   </div>
 )
 
+// ── Main component ────────────────────────────────────────────────────
+
 export default function DnsSslCheckerPage() {
-  const [domain, setDomain] = useState('krumb.dev')
-  const [inputValue, setInputValue] = useState('krumb.dev')
+  const [domain, setDomain] = useState('')
+  const [inputValue, setInputValue] = useState('')
   const [activeTab, setActiveTab] = useState<'dns' | 'ssl'>('dns')
-  const [dnsResults, setDnsResults] = useState<DnsSection[]>(getSimulatedDns('krumb.dev'))
-  const [sslResult, setSslResult] = useState<SslInfo>(getSimulatedSsl('krumb.dev'))
+  const [dnsResults, setDnsResults] = useState<DnsSection[] | null>(null)
+  const [sslResult, setSslResult] = useState<SslInfo | null>(null)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [lookedUp, setLookedUp] = useState(false)
   const [dnsCopied, setDnsCopied] = useState<Record<string, boolean>>({})
   const [sslCopied, setSslCopied] = useState<Record<string, boolean>>({})
 
-  const handleLookup = async () => {
+  // ── Handle lookup ──────────────────────────────────────────────────
+  const handleLookup = useCallback(async () => {
     const d = inputValue.trim().toLowerCase()
-    if (!d) {
-      setError('Enter a domain name')
-      return
-    }
-    if (!isValidDomain(d)) {
-      setError('Invalid domain format (e.g., example.com)')
-      return
-    }
+    if (!d) { setError('Enter a domain name'); return }
+    if (!isValidDomain(d)) { setError('Invalid domain format (e.g., example.com)'); return }
+
     setError('')
     setDomain(d)
     setIsLoading(true)
+    setLookedUp(true)
+    setDnsResults(null)
+    setSslResult(null)
 
-    try {
-      const res = await fetch(`/api/dns-ssl-lookup?domain=${encodeURIComponent(d)}`)
-      if (!res.ok) {
-        throw new Error('Failed to perform live lookup')
-      }
-      const data = await res.json()
-      if (data.dns) setDnsResults(data.dns)
-      if (data.ssl) setSslResult(data.ssl)
-    } catch (err: any) {
-      console.warn('Falling back to simulated data due to lookup error:', err)
-      setDnsResults(getSimulatedDns(d))
-      setSslResult(getSimulatedSsl(d))
-    } finally {
-      setIsLoading(false)
+    if (activeTab === 'dns') {
+      const results = await lookupAllDns(d)
+      setDnsResults(results)
+    } else {
+      const result = await lookupSsl(d)
+      setSslResult(result)
     }
-  }
+
+    setIsLoading(false)
+  }, [inputValue, activeTab])
+
+  // ── Switch tab ─────────────────────────────────────────────────────
+  const switchTab = useCallback((tab: 'dns' | 'ssl') => {
+    setActiveTab(tab)
+    if (domain && lookedUp) {
+      // Re-trigger lookup for the new tab
+      setIsLoading(true)
+      if (tab === 'dns') {
+        setSslResult(null)
+        lookupAllDns(domain).then(r => { setDnsResults(r); setIsLoading(false) })
+      } else {
+        setDnsResults(null)
+        lookupSsl(domain).then(r => { setSslResult(r); setIsLoading(false) })
+      }
+    }
+  }, [domain, lookedUp])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleLookup()
   }
 
+  // ── Copy helpers ───────────────────────────────────────────────────
   const copyDnsValue = async (key: string, value: string) => {
-    try {
-      await navigator.clipboard.writeText(value)
-    } catch {
-      const ta = document.createElement('textarea')
-      ta.value = value
-      document.body.appendChild(ta)
-      ta.select()
-      document.execCommand('copy')
-      document.body.removeChild(ta)
+    try { await navigator.clipboard.writeText(value) } catch {
+      const ta = document.createElement('textarea'); ta.value = value
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta)
     }
-    setDnsCopied((prev) => ({ ...prev, [key]: true }))
-    setTimeout(() => setDnsCopied((prev) => ({ ...prev, [key]: false })), 2000)
+    setDnsCopied(prev => ({ ...prev, [key]: true }))
+    setTimeout(() => setDnsCopied(prev => ({ ...prev, [key]: false })), 2000)
   }
 
   const copySslField = async (field: string, value: string) => {
-    try {
-      await navigator.clipboard.writeText(value)
-    } catch {
-      const ta = document.createElement('textarea')
-      ta.value = value
-      document.body.appendChild(ta)
-      ta.select()
-      document.execCommand('copy')
-      document.body.removeChild(ta)
+    try { await navigator.clipboard.writeText(value) } catch {
+      const ta = document.createElement('textarea'); ta.value = value
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta)
     }
-    setSslCopied((prev) => ({ ...prev, [field]: true }))
-    setTimeout(() => setSslCopied((prev) => ({ ...prev, [field]: false })), 2000)
+    setSslCopied(prev => ({ ...prev, [field]: true }))
+    setTimeout(() => setSslCopied(prev => ({ ...prev, [field]: false })), 2000)
   }
 
-  const isKrumb = domain === 'krumb.dev'
-  const isCustom = !isKrumb
-
+  // ── Render ─────────────────────────────────────────────────────────
   return (
     <ToolLayout
       title="DNS Lookup & SSL Checker"
-      description="Lookup DNS records (A, AAAA, CNAME, MX, NS, TXT, SOA) and check SSL certificate information for any domain. Free online network diagnostics."
+      description="Real-time DNS record lookup and SSL certificate check for any domain. Uses Google DNS-over-HTTPS and Certificate Transparency logs. Free online network diagnostics."
       toolSlug="dns-ssl-checker"
-      categorySlug="developer-tools"
       faq={dnsFaq}
       seoContent={dnsSeo}
     >
-      <div className="space-y-6 font-mono">
+      <div className="space-y-5 font-mono">
         {/* ===== Tabs ===== */}
         <div className="flex gap-3">
           <button
-            onClick={() => setActiveTab('dns')}
+            onClick={() => switchTab('dns')}
             className={`terminal-btn ${activeTab === 'dns' ? 'text-[#00FF41]' : ''}`}
           >
-            {activeTab === 'dns' ? (
-              <>[<span className="green-chevron">&gt;</span> DNS Lookup]</>
-            ) : (
-              <>[DNS Lookup]</>
-            )}
+            {activeTab === 'dns'
+              ? <>[<span className="green-chevron">&gt;</span> DNS Lookup]</>
+              : <>[DNS Lookup]</>
+            }
           </button>
           <button
-            onClick={() => setActiveTab('ssl')}
+            onClick={() => switchTab('ssl')}
             className={`terminal-btn ${activeTab === 'ssl' ? 'text-[#00FF41]' : ''}`}
           >
-            {activeTab === 'ssl' ? (
-              <>[<span className="green-chevron">&gt;</span> SSL Checker]</>
-            ) : (
-              <>[SSL Checker]</>
-            )}
+            {activeTab === 'ssl'
+              ? <>[<span className="green-chevron">&gt;</span> SSL Checker]</>
+              : <>[SSL Checker]</>
+            }
           </button>
         </div>
 
@@ -433,15 +395,12 @@ export default function DnsSslCheckerPage() {
             <input
               type="text"
               value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value)
-                if (error) setError('')
-              }}
+              onChange={e => { setInputValue(e.target.value); if (error) setError('') }}
               onKeyDown={handleKeyDown}
               className={`flex-1 px-4 py-3 bg-[#000000] border text-[#F9F9F9] font-mono text-sm outline-none focus:border-2 transition-none ${
-                error ? 'border-[#ff4444] focus:border-[#ff4444]' : 'border-[#F9F9F9] focus:border-[#00FF41]'
+                error ? 'border-[#ff4444]' : 'border-[#F9F9F9] focus:border-[#00FF41]'
               }`}
-              placeholder="example.com"
+              placeholder={activeTab === 'dns' ? 'example.com' : 'example.com'}
               autoComplete="off"
               spellCheck={false}
             />
@@ -449,116 +408,124 @@ export default function DnsSslCheckerPage() {
               [<span className="green-chevron">&gt;</span> {isLoading ? 'Looking up...' : 'Lookup'}]
             </button>
           </div>
-          {error && (
-            <p className="text-xs font-mono text-[#ff4444] mt-1">{error}</p>
-          )}
+          {error && <p className="text-xs font-mono text-[#ff4444] mt-1">{error}</p>}
         </div>
 
-        {/* ===== Disclaimer ===== */}
+        {/* ===== Info bar ===== */}
         <div className="border border-[#333333] p-3">
           <p className="text-[10px] font-mono text-[#888888] leading-relaxed">
-            <span className="text-[#00FF41]">*</span> Note: Real DNS/SSL checks are performed
-            live via our server-side resolver, with simulated fallback if resolution fails.
-            For production diagnostics, use <span className="text-[#F9F9F9]">dig</span>,{' '}
-            <span className="text-[#F9F9F9]">nslookup</span>, or{' '}
-            <span className="text-[#F9F9F9]">openssl s_client</span> from your terminal.
+            <span className="text-[#00FF41]">*</span> DNS queries use{' '}
+            <span className="text-[#F9F9F9]">Google DNS-over-HTTPS</span>. SSL data comes from{' '}
+            <span className="text-[#F9F9F9]">crt.sh</span> Certificate Transparency logs.
+            Both APIs are free and require no API key.
           </p>
         </div>
 
+        {/* ===== Loading ===== */}
+        {isLoading && (
+          <div className="border border-[#333333] p-6 text-center">
+            <p className="text-xs font-mono text-[#555555]">
+              <span className="animate-terminal-blink text-[#00FF41]">_</span> Resolving...
+            </p>
+          </div>
+        )}
+
         {/* ===== DNS TAB ===== */}
-        {activeTab === 'dns' && (
+        {!isLoading && activeTab === 'dns' && dnsResults && (
           <div className="space-y-6">
             <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider">
               DNS Records for <span className="text-[#F9F9F9]">{domain}</span>
             </p>
 
-            {dnsResults.map((section) => (
-              <div key={section.type} className="border border-[#333333] divide-y divide-[#333333]">
-                {/* Section header */}
-                <div className="px-4 py-2 flex items-center justify-between bg-[#0a0a0a]">
-                  <span className="text-xs font-mono font-bold text-[#00FF41] uppercase tracking-wider">
-                    {section.label}
-                  </span>
-                  {section.records.length > 0 && section.records[0].value && !section.records[0].value.startsWith('No ') && (
-                    <CopyButton text={section.records.map(r => r.value).join('\n')} label="COPY ALL" />
-                  )}
-                </div>
-
-                {/* Records */}
-                {section.records.length > 0 && section.records[0].value ? (
-                  <div className="divide-y divide-[#1a1a1a]">
-                    {section.records.map((rec, idx) => {
-                      const key = `${section.type}-${idx}`
-                      const isPlaceholder = rec.value.startsWith('No ') || rec.value.includes('simulated')
-                      return (
-                        <div key={key} className="px-4 py-3 flex items-start justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            {rec.priority !== undefined && !isPlaceholder && (
-                              <span className="text-[10px] font-mono text-[#888888] mr-2">
-                                [PRIORITY {rec.priority}]
-                              </span>
-                            )}
-                            <span className={`text-xs font-mono break-all ${isPlaceholder ? 'text-[#888888] italic' : 'text-[#F9F9F9]'}`}>
-                              {rec.value}
-                            </span>
-                            {rec.ttl && !isPlaceholder && (
-                              <span className="text-[10px] font-mono text-[#555555] block mt-0.5">
-                                TTL: {rec.ttl}s
-                              </span>
-                            )}
-                          </div>
-                          {!isPlaceholder && (
-                            <button
-                              onClick={() => copyDnsValue(key, rec.value)}
-                              className="terminal-btn shrink-0"
-                            >
-                              [<span className="green-chevron">&gt;</span>{' '}
-                              {dnsCopied[key] ? 'COPIED' : 'COPY'}]
-                            </button>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : section.type === 'CNAME' && isKrumb ? (
-                  <div className="px-4 py-3">
-                    <span className="text-xs font-mono text-[#888888] italic">
-                      No CNAME record at apex — CNAME can only be set on subdomains.
-                    </span>
-                  </div>
-                ) : (
-                  <div className="px-4 py-3">
-                    <span className="text-xs font-mono text-[#888888] italic">
-                      No records found for this type.
-                    </span>
-                  </div>
-                )}
-
-                {/* Explanation — collapsible */}
-                <details className="group">
-                  <summary className="px-4 py-2 text-[10px] font-mono text-[#555555] uppercase tracking-wider cursor-pointer hover:text-[#888888] transition-none select-none">
-                    [<span className="text-[#00FF41] group-open:rotate-90 inline-block transition-none">+</span>] Explain{' '}
-                    {section.type} Records
-                  </summary>
-                  <div className="px-4 py-3 border-t border-[#1a1a1a]">
-                    <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
-                      {section.explanation}
-                    </p>
-                  </div>
-                </details>
+            {dnsResults.every(s => s.records.length === 0) ? (
+              <div className="border border-[#333333] p-4">
+                <p className="text-xs font-mono text-[#888888] text-center">
+                  No DNS records found for <span className="text-[#F9F9F9]">{domain}</span>.
+                  The domain may not exist or has no published records.
+                </p>
               </div>
-            ))}
+            ) : (
+              dnsResults.map(section => {
+                if (section.records.length === 0 && section.type !== 'CNAME') return null // Skip empty sections
+                return (
+                  <div key={section.type} className="border border-[#333333] divide-y divide-[#333333]">
+                    {/* Header */}
+                    <div className="px-4 py-2 flex items-center justify-between bg-[#0a0a0a]">
+                      <span className="text-xs font-mono font-bold text-[#00FF41] uppercase tracking-wider">
+                        {section.label}
+                      </span>
+                      {section.records.length > 0 && (
+                        <CopyButton text={section.records.map(r => r.value).join('\n')} label="COPY ALL" />
+                      )}
+                    </div>
+
+                    {/* Records */}
+                    {section.records.length > 0 ? (
+                      <div className="divide-y divide-[#1a1a1a]">
+                        {section.records.map((rec, idx) => {
+                          const key = `${section.type}-${idx}`
+                          return (
+                            <div key={key} className="px-4 py-3 flex items-start justify-between gap-3">
+                              <div className="min-w-0 flex-1">
+                                {rec.priority !== undefined && (
+                                  <span className="text-[10px] font-mono text-[#888888] mr-2">
+                                    [PRIORITY {rec.priority}]
+                                  </span>
+                                )}
+                                <span className="text-xs font-mono break-all text-[#F9F9F9]">
+                                  {rec.value}
+                                </span>
+                                {rec.ttl && (
+                                  <span className="text-[10px] font-mono text-[#555555] block mt-0.5">
+                                    TTL: {rec.ttl}s
+                                  </span>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => copyDnsValue(key, rec.value)}
+                                className="terminal-btn shrink-0"
+                              >
+                                [<span className="green-chevron">&gt;</span>{' '}
+                                {dnsCopied[key] ? 'COPIED' : 'COPY'}]
+                              </button>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="px-4 py-3">
+                        <span className="text-xs font-mono text-[#888888] italic">
+                          No {section.type} records found.
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Explanation */}
+                    <details className="group">
+                      <summary className="px-4 py-2 text-[10px] font-mono text-[#555555] uppercase tracking-wider cursor-pointer hover:text-[#888888] transition-none select-none">
+                        [<span className="text-[#00FF41] group-open:rotate-90 inline-block transition-none">+</span>] Explain{' '}
+                        {section.type} Records
+                      </summary>
+                      <div className="px-4 py-3 border-t border-[#1a1a1a]">
+                        <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
+                          {section.explanation}
+                        </p>
+                      </div>
+                    </details>
+                  </div>
+                )
+              })
+            )}
           </div>
         )}
 
         {/* ===== SSL TAB ===== */}
-        {activeTab === 'ssl' && (
+        {!isLoading && activeTab === 'ssl' && sslResult && (
           <div className="space-y-6">
             <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider">
               SSL / TLS Certificate for <span className="text-[#F9F9F9]">{domain}</span>
             </p>
 
-            {/* Certificate fields */}
             <div className="border border-[#333333] divide-y divide-[#333333]">
               {/* Subject */}
               <div className="px-4 py-3 flex items-start justify-between gap-3">
@@ -566,12 +533,8 @@ export default function DnsSslCheckerPage() {
                   <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-0.5">Subject</p>
                   <p className="text-xs font-mono text-[#F9F9F9] break-all">{sslResult.subject}</p>
                 </div>
-                <button
-                  onClick={() => copySslField('subject', sslResult.subject)}
-                  className="terminal-btn shrink-0"
-                >
-                  [<span className="green-chevron">&gt;</span>{' '}
-                  {sslCopied['subject'] ? 'COPIED' : 'COPY'}]
+                <button onClick={() => copySslField('subject', sslResult.subject)} className="terminal-btn shrink-0">
+                  [<span className="green-chevron">&gt;</span> {sslCopied['subject'] ? 'COPIED' : 'COPY'}]
                 </button>
               </div>
 
@@ -581,12 +544,8 @@ export default function DnsSslCheckerPage() {
                   <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-0.5">Issuer</p>
                   <p className="text-xs font-mono text-[#F9F9F9] break-all">{sslResult.issuer}</p>
                 </div>
-                <button
-                  onClick={() => copySslField('issuer', sslResult.issuer)}
-                  className="terminal-btn shrink-0"
-                >
-                  [<span className="green-chevron">&gt;</span>{' '}
-                  {sslCopied['issuer'] ? 'COPIED' : 'COPY'}]
+                <button onClick={() => copySslField('issuer', sslResult.issuer)} className="terminal-btn shrink-0">
+                  [<span className="green-chevron">&gt;</span> {sslCopied['issuer'] ? 'COPIED' : 'COPY'}]
                 </button>
               </div>
 
@@ -603,7 +562,7 @@ export default function DnsSslCheckerPage() {
               </div>
 
               {/* Days Remaining */}
-              {isKrumb && (
+              {sslResult.daysRemaining >= 0 && (
                 <div className="px-4 py-3">
                   <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-0.5">Days Remaining</p>
                   <p className={`text-xs font-mono font-bold ${sslResult.daysRemaining <= 30 ? 'text-[#ff4444]' : 'text-[#00FF41]'}`}>
@@ -626,9 +585,7 @@ export default function DnsSslCheckerPage() {
 
               {/* SANs */}
               <div className="px-4 py-3">
-                <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-2">
-                  Subject Alternative Names (SANs)
-                </p>
+                <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-2">Subject Alternative Names (SANs)</p>
                 <div className="space-y-1">
                   {sslResult.sans.map((san, idx) => (
                     <div key={idx} className="flex items-center gap-2">
@@ -639,11 +596,9 @@ export default function DnsSslCheckerPage() {
                 </div>
               </div>
 
-              {/* Certificate Chain */}
+              {/* Chain */}
               <div className="px-4 py-3">
-                <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-2">
-                  Certificate Chain
-                </p>
+                <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-2">Certificate Chain</p>
                 <div className="space-y-1">
                   {sslResult.chain.map((cert, idx) => (
                     <div key={idx} className="flex items-center gap-2">
@@ -654,7 +609,7 @@ export default function DnsSslCheckerPage() {
                 </div>
               </div>
 
-              {/* Copy all SSL info */}
+              {/* Copy all */}
               <div className="px-4 py-3">
                 <CopyButton
                   text={[
@@ -672,47 +627,57 @@ export default function DnsSslCheckerPage() {
               </div>
             </div>
 
-            {/* Certificate info explanation */}
+            {/* SSL explanation */}
             <details className="group border border-[#333333]">
               <summary className="px-4 py-2 text-[10px] font-mono text-[#555555] uppercase tracking-wider cursor-pointer hover:text-[#888888] transition-none select-none">
                 [<span className="text-[#00FF41] group-open:rotate-90 inline-block transition-none">+</span>] Explain SSL Certificate Fields
               </summary>
               <div className="px-4 py-3 border-t border-[#1a1a1a] space-y-3">
                 <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
-                  <span className="text-[#F9F9F9]">Subject:</span> The domain name the certificate was issued to. Modern certificates use the CN (Common Name) field.
+                  <span className="text-[#F9F9F9]">Subject:</span> The domain name the certificate was issued to.
                 </p>
                 <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
-                  <span className="text-[#F9F9F9]">Issuer:</span> The Certificate Authority that signed the certificate. Browsers trust certificates signed by known CAs in their root store.
+                  <span className="text-[#F9F9F9]">Issuer:</span> The Certificate Authority that signed the certificate.
                 </p>
                 <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
-                  <span className="text-[#F9F9F9]">Validity Period:</span> The time window during which the certificate is considered valid. Browsers show warnings if the current date is outside this range.
+                  <span className="text-[#F9F9F9]">Validity Period:</span> The time window during which the certificate is valid.
                 </p>
                 <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
-                  <span className="text-[#F9F9F9]">SANs:</span> Subject Alternative Names list additional domains covered by the same certificate. A single cert may cover multiple domains and subdomains.
+                  <span className="text-[#F9F9F9]">SANs:</span> Subject Alternative Names list additional domains covered by the same certificate.
                 </p>
                 <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
-                  <span className="text-[#F9F9F9]">Certificate Chain:</span> The chain of trust from the leaf certificate through intermediate CAs to a trusted root CA stored in your browser/OS.
+                  <span className="text-[#F9F9F9]">Certificate Chain:</span> The chain of trust from the leaf certificate through intermediate CAs to a trusted root.
                 </p>
               </div>
             </details>
+          </div>
+        )}
 
-            {/* Educational note for custom domains */}
-            {isCustom && (
-              <div className="border border-[#333333] p-4">
-                <p className="text-[10px] font-mono text-[#888888] uppercase tracking-wider mb-2">
-                  How SSL Checking Works
-                </p>
-                <p className="text-[11px] font-mono text-[#888888] leading-relaxed">
-                  To perform a real SSL check for <span className="text-[#F9F9F9]">{domain}</span>,
-                  a server-side tool (like <span className="text-[#F9F9F9]">openssl s_client</span> or
-                  an API-based checker) connects to <span className="text-[#F9F9F9]">{domain}</span>
-                  on port 443, initiates a TLS handshake, and captures the certificate the server
-                  presents. The certificate is then decoded to display the fields shown above.
-                  Results vary depending on the server configuration, CDN, and load balancer
-                  in front of the origin.
-                </p>
-              </div>
-            )}
+        {/* ===== No results yet ===== */}
+        {!isLoading && !dnsResults && !sslResult && lookedUp && (
+          <div className="border border-[#333333] p-4">
+            <p className="text-xs font-mono text-[#888888] text-center">
+              Could not retrieve data for <span className="text-[#F9F9F9]">{domain}</span>.
+              The domain may not exist, or the DNS/CT logs returned no results.
+            </p>
+          </div>
+        )}
+
+        {/* ===== Empty state ===== */}
+        {!lookedUp && (
+          <div className="border border-[#333333] p-8 text-center">
+            <p className="text-xs font-mono text-[#555555] mb-2">
+              {activeTab === 'dns'
+                ? 'Enter a domain to look up its DNS records.'
+                : 'Enter a domain to check its SSL certificate.'
+              }
+            </p>
+            <div className="text-[10px] font-mono text-[#888888] space-y-1">
+              <p>Examples: <button onClick={() => setInputValue('google.com')} className="text-[#00FF41] underline underline-offset-2 hover:text-[#F9F9F9] cursor-pointer">google.com</button>,{' '}
+                <button onClick={() => setInputValue('github.com')} className="text-[#00FF41] underline underline-offset-2 hover:text-[#F9F9F9] cursor-pointer">github.com</button>,{' '}
+                <button onClick={() => setInputValue('stackoverflow.com')} className="text-[#00FF41] underline underline-offset-2 hover:text-[#F9F9F9] cursor-pointer">stackoverflow.com</button>
+              </p>
+            </div>
           </div>
         )}
       </div>

@@ -54,20 +54,28 @@ export function HeroSection() {
     setSelectedIndex(-1)
   }, [query])
 
-  // Featured tools (only these, not all of them)
+  // Featured tools (shown by default)
   const featuredTools = useMemo(() =>
     TOOLS.filter(t => FEATURED_TOOLS.includes(t.slug)),
     []
   )
 
+  // All built tools (used when searching)
+  const allBuiltTools = useMemo(() =>
+    TOOLS.filter(t => BUILT_TOOLS.includes(t.slug)),
+    []
+  )
+
+  // Search across ALL built tools when query is active, otherwise show featured
   const filteredTools = useMemo(() => {
     if (!query.trim()) return featuredTools
     const q = query.toLowerCase()
-    return featuredTools.filter(t =>
+    return allBuiltTools.filter(t =>
       t.name.toLowerCase().includes(q) ||
-      t.slug.toLowerCase().includes(q)
+      t.slug.toLowerCase().includes(q) ||
+      t.shortDescription.toLowerCase().includes(q)
     )
-  }, [query, featuredTools])
+  }, [query, featuredTools, allBuiltTools])
 
   const navigateTo = (slug: string) => {
     setQuery('')

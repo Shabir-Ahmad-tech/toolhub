@@ -28,11 +28,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://krumb.dev"),
   title: {
     default:
-      "ToolHub — 21 Free Developer Tools: JSON Formatter, Regex Tester, Code Beautifier & More",
+      "ToolHub — 46 Free Developer Tools: JSON Formatter, Regex Tester, Code Beautifier & More",
     template: "%s — ToolHub | KRUMB.DEV",
   },
   description:
-    "21 free online developer tools — JSON formatter, JWT decoder, regex tester, code beautifier, password generator, base64 encoder, and more. No signup, no upload, instant results.",
+    "46 free online developer tools — JSON formatter, JWT decoder, regex tester, code beautifier, password generator, base64 encoder, and more. No signup, no upload, instant results.",
   keywords: [
     "free developer tools", "online developer tools", "dev tools online",
     "JSON formatter", "JWT decoder", "regex tester", "code formatter",
@@ -43,14 +43,30 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title:
-      "ToolHub — 21 Free Developer Tools: JSON Formatter, Regex Tester, Code Beautifier & More",
+      "ToolHub — 46 Free Developer Tools: JSON Formatter, Regex Tester, Code Beautifier & More",
     description:
-      "21 free online developer tools. JSON formatter, JWT decoder, regex tester, code beautifier, generators, converters & more. No signup, no upload.",
+      "46 free online developer tools. JSON formatter, JWT decoder, regex tester, code beautifier, generators, converters & more. No signup, no upload.",
     type: "website",
     siteName: "KRUMB.DEV",
+    locale: "en_US",
+    images: [
+      {
+        url: "/krumb-icon.svg",
+        width: 1200,
+        height: 1200,
+        alt: "KRUMB.DEV — Free Developer Tools",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@krumbdev",
+    title: "ToolHub — 46 Free Developer Tools: JSON Formatter, Regex Tester, Code Beautifier & More",
+    description:
+      "46 free online developer tools. JSON formatter, JWT decoder, regex tester, code beautifier, generators, converters & more. No signup, no upload.",
   },
   alternates: {
-    canonical: "./",
+    canonical: "https://krumb.dev",
   },
   robots: {
     index: true,
@@ -73,6 +89,41 @@ export default function RootLayout({
         className="min-h-full flex flex-col bg-[#000000] dark:bg-[#000000] text-[#F9F9F9] font-sans"
         suppressHydrationWarning
       >
+        {/* Organization + WebSite JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: "KRUMB.DEV",
+                url: "https://krumb.dev",
+                logo: "https://krumb.dev/logo.png",
+                sameAs: [
+                  "https://github.com/krumbdev",
+                  "https://x.com/krumbdev",
+                ],
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                name: "KRUMB.DEV",
+                url: "https://krumb.dev",
+                description:
+                  "Free online developer tools — JSON formatter, JWT decoder, regex tester, code beautifier, and more. No signup, no upload.",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate: "https://krumb.dev/tools?q={search_term_string}",
+                  },
+                  "query-input": "required name=search_term_string",
+                },
+              },
+            ]),
+          }}
+        />
         {/* CRT ambient overlays — fixed, pointer-events: none */}
         <div className="crt-grid" aria-hidden="true" />
         <div className="crt-scanlines" aria-hidden="true" />

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { SITE_CONFIG } from '@/lib/constants'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/login', '/dashboard', '/pricing'],
     },
-    sitemap: 'https://toolhub.com/sitemap.xml',
+    sitemap: `${SITE_CONFIG.url}/sitemap.xml`,
   }
 }

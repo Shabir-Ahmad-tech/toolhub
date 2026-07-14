@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { TOOLS, BUILT_TOOLS } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'Best Free Developer Tools — 21 Online Dev Utilities (No Signup)',
+  title: 'Best Free Developer Tools — 46 Online Dev Utilities (No Signup)',
   description:
-    'The definitive collection of 21 free online developer tools. JSON formatter, JWT decoder, regex tester, code beautifier, password generator, converters, playgrounds, and more. All tools run in your browser — no server upload, no signup required.',
+    '46 free online developer tools: JSON formatter, JWT decoder, regex tester, code beautifier, and more. All run in your browser — no upload, no signup.',
   openGraph: {
-    title: 'Best Free Developer Tools — 21 Online Dev Utilities (No Signup)',
+    title: 'Best Free Developer Tools — 46 Online Dev Utilities (No Signup)',
     description:
-      '21 free online developer tools: formatters, validators, encoders, generators, playgrounds. Zero server upload, no signup.',
+      '46 free online developer tools: formatters, validators, encoders, generators, playgrounds. Zero server upload, no signup.',
     type: 'website',
   },
 }
@@ -32,6 +33,11 @@ const toolCategories = [
         slug: 'diff-checker',
         name: 'Diff Checker',
         desc: 'Compare two blocks of text or code side by side and see additions, removals, and changes highlighted. Supports ignore whitespace mode and file upload. Essential for code review, configuration comparison, and debugging content changes.',
+      },
+      {
+        slug: 'markdown-beautifier',
+        name: 'Markdown Beautifier',
+        desc: 'Beautify and clean up messy markdown. Fix malformed tables, normalize spacing and indentation, correct bold/italic formatting, normalize horizontal rules, and optionally add language hints to code blocks. Free client-side tool.',
       },
     ],
   },
@@ -107,6 +113,11 @@ const toolCategories = [
         desc: 'Test regular expressions in real time. View all matches, capture groups, named groups, and replacement results. Supports common flags (g, i, m, s, u, y). Use the JavaScript mode for .match() and .replace() patterns, or the Python mode for re module patterns. Includes a cheat sheet for quick reference.',
       },
       {
+        slug: 'regex-generator',
+        name: 'Regex Generator',
+        desc: 'Generate regex patterns automatically from example text and target matches. Enter the strings you want to match and the tool detects the pattern using intelligent analysis — email, URL, IP, date, hex color, or a generalized character-class pattern. Test the generated pattern live against sample text.',
+      },
+      {
         slug: 'markdown-editor',
         name: 'Markdown Editor',
         desc: 'Write Markdown with live HTML preview. Supports headings, lists, code blocks, tables, images, and links. Auto-saves your content to localStorage. Export formatted output as text. Perfect for drafting README files, documentation, or blog posts before committing.',
@@ -144,6 +155,11 @@ const toolCategories = [
         desc: 'Generate realistic mock webhook payloads for Stripe (payment events), GitHub (push, pull request, issue events), and Shopify (order, product events). View the full payload structure, headers, and sample responses. Useful for testing webhook handlers, building integrations, and understanding third-party API event formats.',
       },
       {
+        slug: 'ip-address-lookup',
+        name: 'IP Address Lookup',
+        desc: 'Find your public IP address, ISP, city, region, country, coordinates, timezone, and ASN. Supports custom IP lookup — check any public IP address. Uses ip-api.com for geolocation data. No signup, no API keys, all client-side.',
+      },
+      {
         slug: 'api-response-validator',
         name: 'API Response Validator',
         desc: 'Paste an HTTP response (status line, headers, body) and get a formatted breakdown. See the status code meaning, header table, and syntax highlighted body. Supports JSON and XML responses. Useful for debugging HTTP clients, inspecting proxy output, and learning HTTP protocol details.',
@@ -169,6 +185,11 @@ const toolCategories = [
         name: 'Cron Expression Builder',
         desc: 'Build cron expressions visually with a human readable translation. Select minute, hour, day of month, month, and day of week from dropdowns. Shows the expression in standard 5-field format. Useful for scheduling cron jobs, CI/CD pipeline triggers, and serverless function schedules.',
       },
+      {
+        slug: 'cron-translator',
+        name: 'Cron Schedule Translator',
+        desc: 'Decode any cron expression into plain English. Paste a cron string like "*/15 * * * 1-5" and read the schedule described in simple language. Supports standard 5-field expressions, @-presets, ranges, steps, and lists. The inverse of the Cron Expression Builder.',
+      },
     ],
   },
 ]
@@ -177,7 +198,7 @@ const faq = [
   {
     question: 'Are these developer tools really free?',
     answer:
-      'Yes. All 21 tools are completely free to use with no hidden charges, no usage limits, and no signup required. There are no "pro" features locked behind a paywall. Every tool runs entirely in your browser — no server costs for us, no privacy risk for you.',
+      'Yes. All 46 tools are completely free to use with no hidden charges, no usage limits, and no signup required. There are no "pro" features locked behind a paywall. Every tool runs entirely in your browser — no server costs for us, no privacy risk for you.',
   },
   {
     question: 'Do I need to create an account to use these tools?',
@@ -233,6 +254,51 @@ export default function FreeDeveloperToolsPage() {
         }}
       />
 
+      {/* JSON-LD: WebPage with freshness dates */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: '46 Free Developer Tools — Complete Collection',
+            description: 'Complete collection of free online developer tools by KRUMB.DEV. All tools run in your browser with no signup.',
+            url: 'https://toolhub.com/free-developer-tools',
+            datePublished: '2026-01-15',
+            dateModified: '2026-07-12',
+            publisher: { '@type': 'Organization', name: 'KRUMB.DEV' },
+          }),
+        }}
+      />
+
+      {/* JSON-LD: ItemList — collection page schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: '46 Free Developer Tools',
+            description: 'Complete collection of free online developer tools by KRUMB.DEV. JSON formatter, JWT decoder, regex tester, code beautifier, and more.',
+            url: 'https://toolhub.com/free-developer-tools',
+            numberOfItems: 46,
+            itemListElement: TOOLS.filter(t => BUILT_TOOLS.includes(t.slug)).map((tool, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              item: {
+                '@type': 'WebApplication',
+                name: tool.name,
+                url: `https://toolhub.com/${tool.slug}`,
+                description: tool.shortDescription,
+                applicationCategory: 'DeveloperApplication',
+                operatingSystem: 'Any',
+                browserRequirements: 'Requires JavaScript',
+              },
+            })),
+          }),
+        }}
+      />
+
       {/* JSON-LD: BreadcrumbList */}
       <script
         type="application/ld+json"
@@ -269,11 +335,11 @@ export default function FreeDeveloperToolsPage() {
         {/* ── HERO ──────────────────────────────────── */}
         <div className="space-y-4">
           <h1 className="text-xl md:text-3xl font-heading font-bold text-[#F9F9F9] leading-snug">
-            21 Free Developer Tools — The Complete Collection
+            46 Free Developer Tools — The Complete Collection
           </h1>
           <p className="text-xs md:text-sm font-mono text-[#888888] leading-relaxed">
             This is the complete guide to every developer tool on ToolHub. From formatting JSON to generating
-            cryptographically secure passwords, all 21 tools are free, require no signup, and process
+            cryptographically secure passwords, all 46 tools are free, require no signup, and process
             everything in your browser. Each tool is described with its exact use case, how it differs
             from alternatives, and why you would use it in your daily workflow.
           </p>
@@ -345,7 +411,7 @@ export default function FreeDeveloperToolsPage() {
           <div className="space-y-4 text-xs md:text-sm font-mono text-[#888888] leading-relaxed">
             <p>
               There are hundreds of free developer tools scattered across the web — individual sites
-              for JSON formatting, code beautifying, Base64 encoding, and so on. ToolHub brings 21 tools
+              for JSON formatting, code beautifying, Base64 encoding, and so on. ToolHub brings 46 tools
               into one consistent interface so you do not waste time context-switching between tabs.
               Every tool shares the same terminal-inspired design, the same keyboard shortcuts, and the
               same privacy guarantee: your data stays on your machine.

@@ -12,6 +12,8 @@ const NAV_LINKS = [
 
 const RESOURCE_LINKS = [
   { name: 'Free Dev Tools Guide', href: '/free-developer-tools' },
+  { name: 'Badge / Share', href: '/badge' },
+  { name: 'Star on GitHub', href: 'https://github.com/Shabir-Ahmad-tech/toolhub', external: true },
 ]
 
 export function Footer() {
@@ -42,15 +44,27 @@ export function Footer() {
             ))}
           </nav>
           <nav className="flex items-center gap-4 flex-wrap justify-center border-t border-[#1a1a1a] pt-2 mt-1">
-            {RESOURCE_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="terminal-btn text-[#888888] text-[10px]"
-              >
-                [<span className="green-chevron">&gt;</span> {link.name}]
-              </Link>
-            ))}
+            {RESOURCE_LINKS.map((link) =>
+              link.external ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="terminal-btn text-[#888888] text-[10px]"
+                >
+                  [<span className="green-chevron">&gt;</span> {link.name} ★]
+                </a>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="terminal-btn text-[#888888] text-[10px]"
+                >
+                  [<span className="green-chevron">&gt;</span> {link.name}]
+                </Link>
+              )
+            )}
           </nav>
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { TOOLS } from '@/lib/constants'
+import { TOOLS, BUILT_TOOLS, RELATED_TOOLS } from '@/lib/constants'
 
 interface RelatedToolsProps {
   currentTool: string
@@ -12,9 +12,19 @@ export function RelatedTools({ currentTool, limit = 4 }: RelatedToolsProps) {
   const current = TOOLS.find(t => t.slug === currentTool)
   if (!current) return null
 
-  const related = TOOLS
-    .filter(t => t.slug !== currentTool && t.category === current.category)
+  // Use curated map, then fall back to same-category filtering
+  let relatedSlugs = RELATED_TOOLS[currentTool]
+  if (!relatedSlugs) {
+    relatedSlugs = TOOLS
+      .filter(t => t.slug !== currentTool && t.category === current.category && BUILT_TOOLS.includes(t.slug))
+      .map(t => t.slug)
+  }
+
+  const related = relatedSlugs
+    .filter(slug => slug !== currentTool && BUILT_TOOLS.includes(slug))
     .slice(0, limit)
+    .map(slug => TOOLS.find(t => t.slug === slug))
+    .filter((t): t is typeof current => t !== undefined)
 
   if (related.length === 0) return null
 

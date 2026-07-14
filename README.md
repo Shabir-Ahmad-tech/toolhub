@@ -1,6 +1,6 @@
-# ToolHub — 20+ Developer Tools, Zero Server, One URL
+# ToolHub — 43 Developer Tools, Zero Server, One URL
 
-> **Client-side developer tools for formatting, encoding, validating, and generating code — all in your browser, no backend, no database, no signup.**
+> **Client-side developer tools for formatting, encoding, validating, generating, and converting code — all in your browser, no backend, no database, no signup.**
 
 [![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Shabir-Ahmad-tech/toolhub)
 
@@ -8,7 +8,7 @@
 
 ## What It Is
 
-ToolHub is a **Next.js 16** app that bundles **21 developer utilities** into one focused interface — JSON formatter, JWT decoder, regex tester, code beautifier, password generator, and more. Every tool runs **100% client-side** using the Web Crypto API and standard browser APIs. Nothing is uploaded to any server.
+ToolHub is a **Next.js 16** app that bundles **43 developer utilities** into one focused interface — JSON formatter, JWT decoder, regex tester, code beautifier, JS/HTML minifier, password generator, color palette generator, and more. Every tool runs **100% client-side** using the Web Crypto API and standard browser APIs. Nothing is uploaded to any server.
 
 **No database needed.** ToolHub is a static-first application. User preferences (language selection, tool history) are stored locally in `localStorage`. There are no user accounts, no sessions, and no persistent storage backend. This means deployment is trivial — push to Vercel, Netlify, or any static host and it works.
 
@@ -16,31 +16,53 @@ ToolHub is a **Next.js 16** app that bundles **21 developer utilities** into one
 
 ## Features
 
-### Developer Tools
+### Developer Tools (43 total)
 
-| Tool | Slugs | Description |
-|------|-------|-------------|
-| **JSON Formatter** | [/json-formatter](https://toolhub.com/json-formatter) | Format, validate, minify JSON with schema support |
-| **JWT Decoder** | [/jwt-decoder](https://toolhub.com/jwt-decoder) | Decode JWT header/payload, check expiry |
-| **Code Formatter** | [/code-formatter](https://toolhub.com/code-formatter) | Beautify JS/TS/HTML/CSS/Python/17 languages |
-| **Regex Tester** | [/regex-tester](https://toolhub.com/regex-tester) | Test patterns with capture groups and flags |
-| **Base64 Encoder/Decoder** | [/base64-encoder](https://toolhub.com/base64-encoder) | Encode/decode text and file to Base64 |
-| **UUID Generator** | [/uuid-generator](https://toolhub.com/uuid-generator) | v1/v3/v4/v5 UUIDs with bulk mode |
-| **Hash Generator** | [/hash-generator](https://toolhub.com/hash-generator) | MD5, SHA-1/256/512, HMAC, batch processing |
-| **Password Generator** | [/password-generator](https://toolhub.com/password-generator) | Strong secure passwords with custom charsets |
-| **Unix Timestamp Converter** | [/unix-timestamp-converter](https://toolhub.com/unix-timestamp-converter) | Epoch ↔ date conversion |
-| **YAML ↔ JSON Converter** | [/yaml-json-converter](https://toolhub.com/yaml-json-converter) | Two-way conversion with live error alerts |
-| **JSON ↔ CSV Converter** | [/json-csv-converter](https://toolhub.com/json-csv-converter) | Two-way structured data conversion |
-| **Diff Checker** | [/diff-checker](https://toolhub.com/diff-checker) | Side-by-side text/code comparison |
-| **URL Encoder/Decoder** | [/url-encoder](https://toolhub.com/url-encoder) | Encode/decode URL-safe strings |
-| **Hex ↔ RGB Converter** | [/hex-to-rgb](https://toolhub.com/hex-to-rgb) | Color format conversion |
-| **Binary Converter** | [/binary-converter](https://toolhub.com/binary-converter) | Decimal/hex/octal/binary ↔ ASCII |
-| **HTML Playground** | [/html-playground](https://toolhub.com/html-playground) | Live HTML/CSS/JS sandbox |
-| **Markdown Editor** | [/markdown-editor](https://toolhub.com/markdown-editor) | Live preview with export |
-| **QR Code Generator/Decoder** | [/qr-code-generator](https://toolhub.com/qr-code-generator) | Create and read QR codes |
-| **Webhook Tester** | [/webhook-tester](https://toolhub.com/webhook-tester) | Mock Stripe/GitHub/Shopify payloads |
-| **API Response Validator** | [/api-response-validator](https://toolhub.com/api-response-validator) | Validate HTTP status + headers |
-| **cURL → Code Converter** | [/curl-to-code](https://toolhub.com/curl-to-code) | cURL to fetch/Axios/Python/Go snippets |
+| Tool | Slug | Description |
+|------|------|-------------|
+| **JSON Formatter** | `/json-formatter` | Format, validate, minify JSON with schema support |
+| **JWT Decoder** | `/jwt-decoder` | Decode JWT header/payload, check expiry |
+| **Code Formatter** | `/code-formatter` | Beautify JS/TS/HTML/CSS/Python/17 languages |
+| **Regex Tester** | `/regex-tester` | Test patterns with capture groups and flags |
+| **Base64 Encoder/Decoder** | `/base64-encoder` | Encode/decode text and file to Base64 |
+| **UUID Generator** | `/uuid-generator` | v1/v3/v4/v5 UUIDs with bulk mode |
+| **Hash Generator** | `/hash-generator` | MD5, SHA-1/256/512, HMAC, batch processing |
+| **Password Generator** | `/password-generator` | Strong secure passwords with custom charsets |
+| **Unix Timestamp Converter** | `/unix-timestamp-converter` | Epoch ↔ date conversion |
+| **YAML ↔ JSON Converter** | `/yaml-json-converter` | Two-way conversion with live error alerts |
+| **JSON ↔ CSV Converter** | `/json-csv-converter` | Two-way structured data conversion |
+| **Diff Checker** | `/diff-checker` | Side-by-side text/code comparison |
+| **URL Encoder/Decoder** | `/url-encoder` | Encode/decode URL-safe strings |
+| **Hex ↔ RGB Converter** | `/hex-to-rgb` | Color format conversion |
+| **Binary Converter** | `/binary-converter` | Decimal/hex/octal/binary ↔ ASCII |
+| **HTML Playground** | `/html-playground` | Live HTML/CSS/JS sandbox |
+| **Markdown Editor** | `/markdown-editor` | Live preview with export |
+| **QR Code Generator/Decoder** | `/qr-code-generator` / `/qr-code-decoder` | Create and read QR codes |
+| **Webhook Tester** | `/webhook-tester` | Mock Stripe/GitHub/Shopify payloads |
+| **API Response Validator** | `/api-response-validator` | Validate HTTP status + headers |
+| **cURL → Code Converter** | `/curl-to-code` | cURL to fetch/Axios/Python/Go snippets |
+| **HTTP Status Codes** | `/http-status-codes` | Browse 60+ HTTP status codes with descriptions |
+| **SQL Formatter** | `/sql-formatter` | Beautify SQL queries for 17+ dialects |
+| **CSS Gradient Generator** | `/css-gradient-generator` | Create linear, radial, conic gradients visually |
+| **CSS Box Shadow Generator** | `/css-box-shadow-generator` | Multi-layer box shadows with live preview |
+| **CSS Grid Generator** | `/css-grid-generator` | Visual CSS Grid and Flexbox layout builder |
+| **Case Converter** | `/case-converter` | Convert between camelCase, snake_case, PascalCase, etc. |
+| **Lorem Ipsum Generator** | `/lorem-ipsum-generator` | Generate placeholder text with custom options |
+| **HTML to Markdown Converter** | `/html-to-markdown-converter` | Convert HTML to clean Markdown |
+| **JavaScript Minifier** | `/js-minifier` | Strip comments, whitespace, compress JS code |
+| **HTML Minifier** | `/html-minifier` | Strip comments, collapse whitespace, compress HTML |
+| **HTML to JSX Converter** | `/html-to-jsx-converter` | Convert HTML to React-compatible JSX syntax |
+| **Color Palette Generator** | `/color-palette-generator` | Generate harmonious color schemes from any color |
+| **Cron Expression Builder** | `/cron-expression-builder` | Build cron schedules with visual preview |
+| **cURL → Code Converter** | `/curl-to-code` | Convert cURL commands to code snippets |
+| **.gitignore Generator** | `/gitignore-generator` | Generate .gitignore files for any tech stack |
+| **Code Playground** | `/code-playground` | Live coding environment with multiple languages |
+| **JSON → TypeScript** | `/json-to-typescript` | Generate TypeScript interfaces from JSON |
+| **SVG to JSX** | `/svg-to-jsx` | Convert SVG markup to React JSX components |
+| **Meta Tag Generator** | `/meta-tag-generator` | Generate SEO meta tags for any page |
+| **Robots.txt & Sitemap Generator** | `/robots-sitemap-generator` | Create robots.txt and XML sitemaps |
+| **IBAN & SWIFT Validator** | `/iban-validator` | Validate and parse IBAN numbers for 80+ countries |
+| **DNS Lookup & SSL Checker** | `/dns-ssl-checker` | Lookup DNS records, verify SSL certificates |
 
 ### SEO Variant Pages (Programmatic)
 
@@ -153,7 +175,7 @@ The app requires **zero environment variables** to function. No database URL, no
 | **Build** | `npm run build` — generates all tools + SEO variants statically |
 | **Routing** | Next.js App Router — all routes pre-rendered at build time |
 | **API routes** | Three minimal routes (`track`, `webhook-proxy`, `dns-ssl-lookup`) — run as Vercel Edge Functions |
-| **Static pages** | ~60 pages generated (21 tools + 12 SEO variants + static pages) |
+| **Static pages** | ~70 pages generated (43 tools + 12 SEO variants + static pages) |
 | **SSL** | Auto-provisioned by Vercel |
 | **CDN** | Vercel Edge Network |
 
@@ -172,8 +194,9 @@ Ensure you deployed the latest commit. Variant pages are generated by `generateS
 1. Create `src/app/<tool-slug>/page.tsx` with metadata export
 2. Create `src/app/<tool-slug>/_client.tsx` with the tool component
 3. Add the tool entry to `src/lib/constants.ts` in the `TOOLS` array
-4. Add SEO variants in `src/lib/seo-variants.ts` if desired
-5. The sitemap will pick up the new tool automatically
+4. Add the slug to `BUILT_TOOLS` in `src/lib/constants.ts`
+5. Add SEO variants in `src/lib/seo-variants.ts` if desired
+6. The sitemap will pick up the new tool automatically
 
 ---
 
